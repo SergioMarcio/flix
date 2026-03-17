@@ -116,14 +116,39 @@
 }
 
 @media (max-width: 600px) {
-  .counters-grid { grid-template-columns: repeat(3, 1fr); }
+  .counters-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem;
+    .counter-card {
+      padding: 1rem 0.5rem;
+      .counter-icon { font-size: 1.2rem; }
+      .counter-value { font-size: 1.5rem; }
+      .counter-label { font-size: 0.65rem; letter-spacing: 0.5px; }
+    }
+  }
+  .time-equivalents {
+    gap: 1rem;
+    .equiv-card {
+      .equiv-value { font-size: 1.1rem; }
+      .equiv-label { font-size: 0.65rem; }
+    }
+  }
 }
 
 @media (max-width: 480px) {
   .stats-page { padding: 84px 1rem 3rem; }
   .time-hero { padding: 1.5rem 1rem; }
   .time-separator { font-size: 3rem; }
-  .time-equivalents { gap: 1rem; flex-wrap: wrap; justify-content: center; }
-  .counters-grid { grid-template-columns: repeat(3, 1fr); }
+  .time-equivalents { gap: 0.8rem; flex-wrap: wrap; justify-content: center; }
+  .counters-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    .counter-card {
+      padding: 0.8rem 0.4rem;
+      .counter-icon { font-size: 1rem; }
+      .counter-value { font-size: 1.3rem; }
+      .counter-label { font-size: 0.6rem; letter-spacing: 0; }
+    }
+  }
   .series-rows .series-row { flex-wrap: wrap; img { width: 44px; height: 66px; } }
 }
