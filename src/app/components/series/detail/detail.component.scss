@@ -126,6 +126,21 @@
       .season-episodes { font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-top: 0.2rem; }
       .season-year { font-size: 0.75rem; color: rgba(255,255,255,0.35); margin-top: 0.1rem; }
     }
+    .season-progress {
+      font-size: 0.75rem; color: rgba(255,255,255,0.35); margin-top: 0.2rem;
+      .watched-count { color: #4ade80; font-weight: 600; }
+    }
+
+    .mark-all-btn {
+      flex-shrink: 0; background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3);
+      color: #4ade80; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.78rem;
+      font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: inherit;
+      white-space: nowrap;
+      &:hover:not(:disabled) { background: rgba(34,197,94,0.25); border-color: #22c55e; }
+      &:disabled { cursor: default; }
+      &.done { background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.15); color: rgba(34,197,94,0.5); }
+    }
+
     .season-arrow { font-size: 1.5rem; color: rgba(212,175,55,0.6); flex-shrink: 0; }
   }
 }

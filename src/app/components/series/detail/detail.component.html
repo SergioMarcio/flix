@@ -72,7 +72,19 @@
             <p class="season-name">{{ season.name }}</p>
             <p class="season-episodes">{{ season.episode_count }} episódios</p>
             <p class="season-year">{{ season.air_date?.substring(0,4) }}</p>
+            <p class="season-progress" *ngIf="getSeasonWatchedCount(season.season_number) > 0">
+              <span class="watched-count">{{ getSeasonWatchedCount(season.season_number) }}/{{ season.episode_count }}</span> assistidos
+            </p>
           </div>
+          <button class="mark-all-btn"
+            [class.done]="isSeasonFullyWatched(season)"
+            [disabled]="markingSet.has(season.season_number) || isSeasonFullyWatched(season)"
+            (click)="markSeasonAllWatched(season, $event)"
+            [title]="isSeasonFullyWatched(season) ? 'Temporada concluída' : 'Marcar todos como assistidos'">
+            <span *ngIf="markingSet.has(season.season_number)">⏳</span>
+            <span *ngIf="!markingSet.has(season.season_number) && !isSeasonFullyWatched(season)">✓ Todos</span>
+            <span *ngIf="isSeasonFullyWatched(season)">✅</span>
+          </button>
           <span class="season-arrow">›</span>
         </div>
       </div>
