@@ -15,6 +15,8 @@ export class MyListComponent implements OnInit {
   allMovies: UserMovie[] = [];
   filteredMovies: UserMovie[] = [];
   activeFilter: WatchStatus | 'all' = 'all';
+  sortBy: 'name' | 'year' = 'name';
+  sortDir: 'asc' | 'desc' = 'asc';
   loading = true;
   stats = { watched: 0, not_watched: 0, want_to_watch: 0 };
 
@@ -43,11 +45,27 @@ export class MyListComponent implements OnInit {
 
   applyFilter(filter: WatchStatus | 'all'): void {
     this.activeFilter = filter;
-    if (filter === 'all') {
-      this.filteredMovies = [...this.allMovies];
+    const base = filter === 'all' ? [...this.allMovies] : this.allMovies.filter(m => m.status === filter);
+    this.filteredMovies = this.sortList(base);
+  }
+
+  setSort(sort: 'name' | 'year'): void {
+    if (this.sortBy === sort) {
+      this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
     } else {
-      this.filteredMovies = this.allMovies.filter(m => m.status === filter);
+      this.sortBy = sort;
+      this.sortDir = 'asc';
     }
+    this.applyFilter(this.activeFilter);
+  }
+
+  private sortList(list: UserMovie[]): UserMovie[] {
+    return [...list].sort((a, b) => {
+      const cmp = this.sortBy === 'name'
+        ? a.movie_title.localeCompare(b.movie_title)
+        : (a.release_date || '').localeCompare(b.release_date || '');
+      return this.sortDir === 'asc' ? cmp : -cmp;
+    });
   }
 
   getPosterUrl(path: string): string {

@@ -44,6 +44,17 @@
     </button>
   </div>
 
+  <!-- Sort -->
+  <div class="sort-bar">
+    <span class="sort-label">Ordenar:</span>
+    <button [class.active]="sortBy === 'name'" (click)="setSort('name')">
+      Nome {{ sortBy === 'name' ? (sortDir === 'asc' ? '↑' : '↓') : '' }}
+    </button>
+    <button [class.active]="sortBy === 'year'" (click)="setSort('year')">
+      Ano {{ sortBy === 'year' ? (sortDir === 'asc' ? '↑' : '↓') : '' }}
+    </button>
+  </div>
+
   <!-- Loading -->
   <div class="loading-container" *ngIf="loading">
     <div class="film-reel">🎞️</div>
