@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { APP_VERSION, CHANGELOG, VersionEntry } from '../../version';
 
 @Component({
   selector: 'app-sobre',
@@ -10,6 +11,9 @@ import { RouterLink } from '@angular/router';
   styleUrl: './sobre.component.scss'
 })
 export class SobreComponent {
+  appVersion = APP_VERSION;
+  changelog: VersionEntry[] = CHANGELOG;
+
   techs = [
     { name: 'Angular 17', desc: 'Framework front-end', icon: '🅰️', color: '#dd0031' },
     { name: 'TypeScript', desc: 'Linguagem principal', icon: '🔷', color: '#3178c6' },
