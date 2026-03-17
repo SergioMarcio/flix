@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export type WatchStatus = 'watched' | 'not_watched' | 'want_to_watch';
-export type SeriesStatus = 'watching' | 'watched' | 'want_to_watch' | 'not_watched';
+export type SeriesStatus = 'watching' | 'watched' | 'want_to_watch';
 
 export interface UserSeries {
   id?: number;
@@ -310,6 +310,27 @@ export class SupabaseService {
       .eq('series_id', seriesId)
       .eq('season_number', seasonNumber)
       .eq('episode_number', episodeNumber);
+    if (error) throw error;
+  }
+
+  async removeAllSeriesEpisodes(seriesId: number): Promise<void> {
+    if (!this.client || !this.userId) return;
+    const { error } = await this.client
+      .from('user_episodes')
+      .delete()
+      .eq('user_id', this.userId)
+      .eq('series_id', seriesId);
+    if (error) throw error;
+  }
+
+  async removeSeasonWatched(seriesId: number, seasonNumber: number): Promise<void> {
+    if (!this.client || !this.userId) return;
+    const { error } = await this.client
+      .from('user_episodes')
+      .delete()
+      .eq('user_id', this.userId)
+      .eq('series_id', seriesId)
+      .eq('season_number', seasonNumber);
     if (error) throw error;
   }
 

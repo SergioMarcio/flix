@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SupabaseService, WatchedEpisode } from '../../../services/supabase.service';
-import { TVEpisode, TVSeasonDetail, TmdbService } from '../../../services/tmdb.service';
+import { TVEpisode, TVSeasonDetail, TVShowDetail, TmdbService } from '../../../services/tmdb.service';
 import { EpisodeModalComponent } from '../episode-modal/episode-modal.component';
 
 @Component({
@@ -14,6 +14,7 @@ import { EpisodeModalComponent } from '../episode-modal/episode-modal.component'
 })
 export class SeasonDetailComponent implements OnInit {
   season: TVSeasonDetail | null = null;
+  showDetail: TVShowDetail | null = null;
   seriesId = 0;
   seriesName = '';
   seasonNumber = 0;
@@ -48,6 +49,23 @@ export class SeasonDetailComponent implements OnInit {
       },
       error: () => { this.loading = false; }
     });
+    this.tmdb.getShowDetail(this.seriesId).subscribe({
+      next: (show) => { this.showDetail = show; },
+      error: () => {}
+    });
+  }
+
+  private async ensureSeriesInList(): Promise<void> {
+    const existing = await this.supabase.getSeriesStatus(this.seriesId);
+    if (existing || !this.showDetail) return;
+    await this.supabase.setSeriesStatus({
+      series_id: this.showDetail.id,
+      series_name: this.showDetail.name,
+      poster_path: this.showDetail.poster_path,
+      first_air_date: this.showDetail.first_air_date,
+      vote_average: this.showDetail.vote_average,
+      status: 'watching'
+    });
   }
 
   async loadWatched(): Promise<void> {
@@ -79,7 +97,10 @@ export class SeasonDetailComponent implements OnInit {
           episode_name: ep.name,
           runtime: ep.runtime ?? undefined
         };
-        await this.supabase.setEpisodeWatched(episode);
+        await Promise.all([
+          this.supabase.setEpisodeWatched(episode),
+          this.ensureSeriesInList(),
+        ]);
         this.watchedSet.add(ep.episode_number);
       }
       this.watchedSet = new Set(this.watchedSet); // trigger change detection
@@ -95,15 +116,18 @@ export class SeasonDetailComponent implements OnInit {
     this.saving = true;
     try {
       const unwatched = this.season.episodes.filter(ep => !this.isWatched(ep));
-      await Promise.all(unwatched.map(ep =>
-        this.supabase.setEpisodeWatched({
-          series_id: this.seriesId,
-          season_number: this.seasonNumber,
-          episode_number: ep.episode_number,
-          episode_name: ep.name,
-          runtime: ep.runtime ?? undefined
-        })
-      ));
+      await Promise.all([
+        ...unwatched.map(ep =>
+          this.supabase.setEpisodeWatched({
+            series_id: this.seriesId,
+            season_number: this.seasonNumber,
+            episode_number: ep.episode_number,
+            episode_name: ep.name,
+            runtime: ep.runtime ?? undefined
+          })
+        ),
+        this.ensureSeriesInList(),
+      ]);
       this.watchedSet = new Set(this.season.episodes.map(e => e.episode_number));
     } catch (err) {
       console.error(err);

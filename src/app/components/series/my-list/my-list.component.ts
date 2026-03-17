@@ -16,7 +16,7 @@ export class MySeriesListComponent implements OnInit {
   filteredSeries: UserSeries[] = [];
   activeFilter: SeriesStatus | 'all' = 'all';
   loading = true;
-  stats = { watching: 0, watched: 0, not_watched: 0, want_to_watch: 0 };
+  stats = { watching: 0, watched: 0, want_to_watch: 0 };
 
   constructor(
     private supabaseService: SupabaseService,
@@ -42,7 +42,7 @@ export class MySeriesListComponent implements OnInit {
   }
 
   private computeStats(): void {
-    this.stats = { watching: 0, watched: 0, not_watched: 0, want_to_watch: 0 };
+    this.stats = { watching: 0, watched: 0, want_to_watch: 0 };
     this.allSeries.forEach(s => this.stats[s.status]++);
   }
 
@@ -61,8 +61,8 @@ export class MySeriesListComponent implements OnInit {
     switch (status) {
       case 'watching':     return '▶ Assistindo';
       case 'watched':      return '✅ Concluída';
-      case 'not_watched':  return '❌ Não Vi';
       case 'want_to_watch': return '⭐ Quero Ver';
+      default: return '';
     }
   }
 
@@ -77,7 +77,10 @@ export class MySeriesListComponent implements OnInit {
   async removeSeries(event: Event, seriesId: number): Promise<void> {
     event.stopPropagation();
     try {
-      await this.supabaseService.removeSeriesStatus(seriesId);
+      await Promise.all([
+        this.supabaseService.removeSeriesStatus(seriesId),
+        this.supabaseService.removeAllSeriesEpisodes(seriesId),
+      ]);
       this.allSeries = this.allSeries.filter(s => s.series_id !== seriesId);
       this.computeStats();
       this.applyFilter(this.activeFilter);

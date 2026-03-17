@@ -25,8 +25,6 @@
               (click)="setStatus('watched')">✅ Concluída</button>
             <button class="status-btn want" [class.active]="status === 'want_to_watch'" [disabled]="saving"
               (click)="setStatus('want_to_watch')">⭐ Quero Ver</button>
-            <button class="status-btn not-watched" [class.active]="status === 'not_watched'" [disabled]="saving"
-              (click)="setStatus('not_watched')">❌ Não Assisti</button>
           </div>
           <button class="remove-btn" *ngIf="status" (click)="removeStatus()" [disabled]="saving">
             🗑️ Remover da lista
@@ -76,15 +74,23 @@
               <span class="watched-count">{{ getSeasonWatchedCount(season.season_number) }}/{{ season.episode_count }}</span> assistidos
             </p>
           </div>
-          <button class="mark-all-btn"
-            [class.done]="isSeasonFullyWatched(season)"
-            [disabled]="markingSet.has(season.season_number) || isSeasonFullyWatched(season)"
-            (click)="markSeasonAllWatched(season, $event)"
-            [title]="isSeasonFullyWatched(season) ? 'Temporada concluída' : 'Marcar todos como assistidos'">
-            <span *ngIf="markingSet.has(season.season_number)">⏳</span>
-            <span *ngIf="!markingSet.has(season.season_number) && !isSeasonFullyWatched(season)">✓ Todos</span>
-            <span *ngIf="isSeasonFullyWatched(season)">✅</span>
-          </button>
+          <ng-container *ngIf="!markingSet.has(season.season_number); else loadingBtn">
+            <button *ngIf="!isSeasonFullyWatched(season) && season.episode_count > 0"
+              class="mark-all-btn"
+              (click)="markSeasonAllWatched(season, $event)"
+              title="Marcar todos como assistidos">
+              ✓  Marcar Todos os Episódios da Temporada como Assistidos
+            </button>
+            <button *ngIf="isSeasonFullyWatched(season)"
+              class="mark-all-btn done"
+              (click)="unmarkSeasonAllWatched(season, $event)"
+              title="Desmarcar todos os episódios">
+              ❌ Desmarcar Todos os Episódios da Temporada
+            </button>
+          </ng-container>
+          <ng-template #loadingBtn>
+            <button class="mark-all-btn loading" disabled>⏳</button>
+          </ng-template>
           <span class="season-arrow">›</span>
         </div>
       </div>

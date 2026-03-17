@@ -101,8 +101,35 @@ export class SeriesDetailComponent implements OnInit {
       ));
       const newSet = new Set<number>(detail.episodes.map(e => e.episode_number));
       this.seasonWatchedMap = new Map(this.seasonWatchedMap).set(season.season_number, newSet);
+      if (!this.status) {
+        await this.supabase.setSeriesStatus({
+          series_id: this.show!.id,
+          series_name: this.show!.name,
+          poster_path: this.show!.poster_path,
+          first_air_date: this.show!.first_air_date,
+          vote_average: this.show!.vote_average,
+          status: 'watching'
+        });
+        this.status = 'watching';
+      }
     } catch (err) {
       console.error('Erro ao marcar temporada:', err);
+    } finally {
+      this.markingSet.delete(season.season_number);
+      this.markingSet = new Set(this.markingSet);
+    }
+  }
+
+  async unmarkSeasonAllWatched(season: TVSeason, event: MouseEvent): Promise<void> {
+    event.stopPropagation();
+    if (!this.show || this.markingSet.has(season.season_number)) return;
+    this.markingSet = new Set(this.markingSet);
+    this.markingSet.add(season.season_number);
+    try {
+      await this.supabase.removeSeasonWatched(this.show.id, season.season_number);
+      this.seasonWatchedMap = new Map(this.seasonWatchedMap).set(season.season_number, new Set());
+    } catch (err) {
+      console.error('Erro ao desmarcar temporada:', err);
     } finally {
       this.markingSet.delete(season.season_number);
       this.markingSet = new Set(this.markingSet);
@@ -133,8 +160,12 @@ export class SeriesDetailComponent implements OnInit {
     if (!this.show) return;
     this.saving = true;
     try {
-      await this.supabase.removeSeriesStatus(this.show.id);
+      await Promise.all([
+        this.supabase.removeSeriesStatus(this.show.id),
+        this.supabase.removeAllSeriesEpisodes(this.show.id),
+      ]);
       this.status = null;
+      this.seasonWatchedMap = new Map();
     } catch {}
     this.saving = false;
   }
@@ -176,7 +207,6 @@ export class SeriesDetailComponent implements OnInit {
       watching: '▶ Assistindo',
       watched: '✅ Concluída',
       want_to_watch: '⭐ Quero Ver',
-      not_watched: '❌ Não Assisti'
     };
     return labels[s];
   }
