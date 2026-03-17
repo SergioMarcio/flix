@@ -113,8 +113,8 @@
     <div class="photos-section" *ngIf="photos.length">
       <h2 class="section-title">Fotos</h2>
       <div class="photos-grid">
-        <img *ngFor="let photo of photos" [src]="getPhotoUrl(photo.file_path)" alt="Foto da série"
-          class="photo-item" loading="lazy" />
+        <img *ngFor="let photo of photos" [src]="getPhotoUrl(photo.file_path)" alt="Foto da série" class="photo-item"
+          loading="lazy" />
       </div>
     </div>
 
@@ -154,10 +154,7 @@
 </div>
 
 <!-- Person Modal -->
-<app-person-modal
-  *ngIf="selectedPersonId"
-  [personId]="selectedPersonId"
-  (closed)="selectedPersonId = null">
+<app-person-modal *ngIf="selectedPersonId" [personId]="selectedPersonId" (closed)="selectedPersonId = null">
 </app-person-modal>
 
 <!-- Trailer Modal -->

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { firstValueFrom, forkJoin } from 'rxjs';
+import { catchError, firstValueFrom, forkJoin, of } from 'rxjs';
 import { SafeUrlPipe } from '../../../pipes/safe-url.pipe';
 import { SeriesStatus, SupabaseService, WatchedEpisode } from '../../../services/supabase.service';
 import { MovieCastMember, MovieImage, MovieVideo, TVSeason, TVShowDetail, TmdbService, WatchProvider } from '../../../services/tmdb.service';
@@ -51,10 +51,10 @@ export class SeriesDetailComponent implements OnInit {
     this.loading = true;
     forkJoin({
       detail: this.tmdb.getShowDetail(id),
-      videos: this.tmdb.getShowVideos(id),
-      providers: this.tmdb.getShowWatchProviders(id),
-      images: this.tmdb.getShowImages(id),
-      credits: this.tmdb.getShowCredits(id)
+      videos: this.tmdb.getShowVideos(id).pipe(catchError(() => of({ results: [] }))),
+      providers: this.tmdb.getShowWatchProviders(id).pipe(catchError(() => of({ results: {} as Record<string, any> }))),
+      images: this.tmdb.getShowImages(id).pipe(catchError(() => of({ backdrops: [], posters: [] }))),
+      credits: this.tmdb.getShowCredits(id).pipe(catchError(() => of({ cast: [], crew: [] })))
     }).subscribe({
       next: ({ detail, videos, providers, images, credits }) => {
         this.show = detail;

@@ -265,9 +265,10 @@ export class SupabaseService {
 
   async setSeriesStatus(series: UserSeries): Promise<void> {
     if (!this.client || !this.userId) throw new Error('Usuário não autenticado.');
+    const { number_of_seasons: _omit, ...rest } = series;
     const { error } = await this.client
       .from('user_series')
-      .upsert({ ...series, user_id: this.userId, updated_at: new Date().toISOString() },
+      .upsert({ ...rest, user_id: this.userId, updated_at: new Date().toISOString() },
         { onConflict: 'user_id,series_id' });
     if (error) throw error;
   }
