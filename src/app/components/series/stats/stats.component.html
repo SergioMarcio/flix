@@ -1,0 +1,96 @@
+<div class="stats-page">
+  <div class="page-header">
+    <h1>📺 Estatísticas de Séries</h1>
+    <p class="subtitle">Quanto tempo você passou assistindo séries</p>
+  </div>
+
+  <div class="loading-screen" *ngIf="loading">
+    <div class="spinner-icon">📺</div>
+    <p>Calculando seu tempo...</p>
+  </div>
+
+  <ng-container *ngIf="!loading">
+
+    <!-- Hero tempo total -->
+    <div class="time-hero">
+      <div class="time-display">
+        <div class="time-block" *ngIf="totalHours > 0 || remainingMinutes > 0; else noTime">
+          <div class="time-unit">
+            <span class="time-value">{{ totalHours }}</span>
+            <span class="time-label">horas</span>
+          </div>
+          <span class="time-separator">:</span>
+          <div class="time-unit">
+            <span class="time-value">{{ remainingMinutes }}</span>
+            <span class="time-label">minutos</span>
+          </div>
+        </div>
+        <ng-template #noTime>
+          <div class="no-time">
+            <p>Nenhum tempo registrado ainda.</p>
+            <p class="hint">Marque episódios como vistos para contabilizar!</p>
+          </div>
+        </ng-template>
+      </div>
+
+      <div class="time-equivalents" *ngIf="totalMinutes > 0">
+        <div class="equiv-card" *ngIf="totalDays > 0">
+          <span class="equiv-icon">📅</span>
+          <span class="equiv-value">{{ totalDays }}</span>
+          <span class="equiv-label">dias completos</span>
+        </div>
+        <div class="equiv-card">
+          <span class="equiv-icon">🎬</span>
+          <span class="equiv-value">{{ totalEpisodes }}</span>
+          <span class="equiv-label">episódios vistos</span>
+        </div>
+        <div class="equiv-card" *ngIf="averageRuntime > 0">
+          <span class="equiv-icon">⌛</span>
+          <span class="equiv-value">{{ formatRuntime(averageRuntime) }}</span>
+          <span class="equiv-label">duração média</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contadores -->
+    <div class="counters-grid">
+      <div class="counter-card total">
+        <span class="counter-icon">📺</span>
+        <span class="counter-value">{{ totalSeriesCount }}</span>
+        <span class="counter-label">Total de Séries</span>
+      </div>
+      <div class="counter-card watching">
+        <span class="counter-icon">▶</span>
+        <span class="counter-value">{{ watchingCount }}</span>
+        <span class="counter-label">Assistindo</span>
+      </div>
+      <div class="counter-card watched">
+        <span class="counter-icon">✅</span>
+        <span class="counter-value">{{ watchedCount }}</span>
+        <span class="counter-label">Concluídas</span>
+      </div>
+    </div>
+
+    <!-- Por série -->
+    <div class="series-list" *ngIf="seriesProgress.length > 0">
+      <h2 class="section-title">
+        📺 Séries contabilizadas
+        <span class="count-badge">{{ seriesProgress.length }}</span>
+      </h2>
+      <div class="series-rows">
+        <div class="series-row" *ngFor="let sp of seriesProgress" (click)="goToSeries(sp.series.series_id)">
+          <img [src]="getPosterUrl(sp.series.poster_path)" [alt]="sp.series.series_name" />
+          <div class="series-info">
+            <span class="series-name">{{ sp.series.series_name }}</span>
+            <span class="series-episodes">{{ sp.watchedEpisodes }} ep. vistos</span>
+          </div>
+          <div class="series-time">
+            <span class="time-label" *ngIf="sp.totalMinutes > 0">{{ formatRuntime(sp.totalMinutes) }}</span>
+            <span class="no-time" *ngIf="sp.totalMinutes === 0">— sem dados</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </ng-container>
+</div>

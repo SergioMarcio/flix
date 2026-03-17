@@ -1,0 +1,121 @@
+<div class="modal-backdrop" (click)="onBackdropClick($event)">
+  <div class="modal">
+
+    <button class="close-btn" (click)="close.emit()">✕</button>
+
+    <!-- Still Image -->
+    <div class="still-wrap" *ngIf="episode.still_path">
+      <img [src]="getStillUrl()" [alt]="episode.name" />
+    </div>
+    <div class="still-placeholder" *ngIf="!episode.still_path">
+      <span>📺</span>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- Header -->
+      <div class="ep-header">
+        <span class="ep-number">Episódio {{ episode.episode_number }}</span>
+        <span class="ep-rating" *ngIf="episode.vote_average > 0">★ {{ episode.vote_average.toFixed(1) }}</span>
+      </div>
+      <h2 class="ep-title">{{ episode.name }}</h2>
+
+      <!-- Meta -->
+      <div class="ep-meta">
+        <div class="meta-item" *ngIf="episode.air_date">
+          <span class="meta-label">Exibição</span>
+          <span class="meta-value">{{ episode.air_date | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="meta-item" *ngIf="episode.runtime">
+          <span class="meta-label">Duração</span>
+          <span class="meta-value">{{ formatRuntime(episode.runtime) }}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Temporada</span>
+          <span class="meta-value">{{ episode.season_number }}</span>
+        </div>
+      </div>
+
+      <!-- Sinopse -->
+      <div class="section" *ngIf="episode.overview">
+        <h3 class="section-label">Sinopse</h3>
+        <p class="overview-text">{{ episode.overview }}</p>
+      </div>
+      <div class="section" *ngIf="!episode.overview">
+        <p class="no-data">Sem sinopse disponível.</p>
+      </div>
+
+      <!-- Direção & Roteiro -->
+      <div class="section" *ngIf="!loadingCredits && (directors.length > 0 || writers.length > 0)">
+        <div class="crew-grid">
+          <div class="crew-block" *ngIf="directors.length > 0">
+            <h3 class="section-label">Direção</h3>
+            <div class="crew-list">
+              <div class="crew-member" *ngFor="let d of directors">
+                <div class="crew-avatar" *ngIf="d.profile_path">
+                  <img [src]="getProfileUrl(d.profile_path)" [alt]="d.name" />
+                </div>
+                <div class="crew-avatar placeholder" *ngIf="!d.profile_path">
+                  <span>🎬</span>
+                </div>
+                <span class="crew-name">{{ d.name }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="crew-block" *ngIf="writers.length > 0">
+            <h3 class="section-label">Roteiro</h3>
+            <div class="crew-list">
+              <div class="crew-member" *ngFor="let w of writers">
+                <div class="crew-avatar" *ngIf="w.profile_path">
+                  <img [src]="getProfileUrl(w.profile_path)" [alt]="w.name" />
+                </div>
+                <div class="crew-avatar placeholder" *ngIf="!w.profile_path">
+                  <span>✍️</span>
+                </div>
+                <span class="crew-name">{{ w.name }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Elenco -->
+      <div class="section" *ngIf="!loadingCredits && cast.length > 0">
+        <h3 class="section-label">Elenco</h3>
+        <div class="cast-scroll">
+          <div class="cast-card" *ngFor="let actor of cast">
+            <div class="cast-photo" *ngIf="actor.profile_path">
+              <img [src]="getProfileUrl(actor.profile_path)" [alt]="actor.name" />
+            </div>
+            <div class="cast-photo placeholder" *ngIf="!actor.profile_path">
+              <span>👤</span>
+            </div>
+            <span class="cast-name">{{ actor.name }}</span>
+            <span class="cast-character">{{ actor.character }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fotos adicionais -->
+      <div class="section" *ngIf="!loadingImages && stills.length > 0">
+        <h3 class="section-label">Fotos</h3>
+        <div class="stills-grid">
+          <div class="still-thumb" *ngFor="let s of stills">
+            <img [src]="s" alt="Still" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div class="loading-credits" *ngIf="loadingCredits">
+        <span>Carregando ficha técnica...</span>
+      </div>
+
+      <!-- Action -->
+      <button class="watch-btn" [class.watched]="watched" (click)="toggleWatched.emit()">
+        {{ watched ? '✅ Marcado como visto' : '⬜ Marcar como visto' }}
+      </button>
+
+    </div>
+  </div>
+</div>

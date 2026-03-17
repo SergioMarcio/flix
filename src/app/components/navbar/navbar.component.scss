@@ -20,7 +20,9 @@
     text-decoration: none;
     flex-shrink: 0;
 
-    .brand-icon { font-size: 1.5rem; }
+    .brand-icon {
+      font-size: 1.5rem;
+    }
 
     .brand-name {
       font-size: 2rem;
@@ -51,7 +53,7 @@
     font-size: 0.6rem;
     text-transform: uppercase;
     letter-spacing: 2px;
-    color: rgba(255, 255, 255, 0.3);
+    color: #ffffff;
     margin-bottom: 2px;
     line-height: 1;
   }
@@ -70,8 +72,13 @@
       transition: color 0.2s ease;
       white-space: nowrap;
 
-      &:hover { color: #fff; }
-      &.active { color: #D4AF37; }
+      &:hover {
+        color: #fff;
+      }
+
+      &.active {
+        color: #D4AF37;
+      }
 
       &.pill {
         padding: 0.3rem 0.85rem;
@@ -85,14 +92,26 @@
           background: rgba(212, 175, 55, 0.12);
           border-color: rgba(212, 175, 55, 0.35);
           color: rgba(212, 175, 55, 0.85);
-          &:hover, &.active { background: rgba(212, 175, 55, 0.25); border-color: #D4AF37; color: #D4AF37; }
+
+          &:hover,
+          &.active {
+            background: rgba(212, 175, 55, 0.25);
+            border-color: #D4AF37;
+            color: #D4AF37;
+          }
         }
 
         &.indigo {
           background: rgba(99, 102, 241, 0.12);
           border-color: rgba(99, 102, 241, 0.35);
           color: rgba(165, 180, 252, 0.85);
-          &:hover, &.active { background: rgba(99, 102, 241, 0.25); border-color: #6366f1; color: #a5b4fc; }
+
+          &:hover,
+          &.active {
+            background: rgba(99, 102, 241, 0.25);
+            border-color: #6366f1;
+            color: #a5b4fc;
+          }
         }
       }
     }
@@ -164,16 +183,26 @@
   }
 
   &.open {
-    span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-    span:nth-child(2) { opacity: 0; }
-    span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+
+    span:nth-child(2) {
+      opacity: 0;
+    }
+
+    span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
   }
 }
 
 // Mobile
 @media (max-width: 900px) {
   .navbar {
-    .menu-toggle { display: flex; }
+    .menu-toggle {
+      display: flex;
+    }
 
     .navbar-links {
       display: none;
@@ -188,14 +217,18 @@
       gap: 0;
       border-bottom: 1px solid rgba(212, 175, 55, 0.15);
 
-      &.open { display: flex; }
+      &.open {
+        display: flex;
+      }
     }
   }
 
   .nav-group {
     padding: 0.8rem 0;
 
-    .nav-group-label { margin-bottom: 0.6rem; }
+    .nav-group-label {
+      margin-bottom: 0.6rem;
+    }
 
     .nav-group-links {
       flex-wrap: wrap;

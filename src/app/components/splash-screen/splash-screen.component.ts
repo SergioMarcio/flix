@@ -1,5 +1,5 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-splash-screen',
@@ -21,6 +21,6 @@ export class SplashScreenComponent implements OnInit {
         this.visible = false;
         this.done.emit();
       }, 700);
-    }, 2200);
+    }, 3000);
   }
 }

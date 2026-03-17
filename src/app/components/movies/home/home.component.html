@@ -1,0 +1,61 @@
+<!-- Hero Section -->
+<section class="hero" *ngIf="heroMovie && !isSearching" [class.fading]="heroFading"
+  [style.background-image]="'url(' + getBackdropUrl(heroMovie) + ')'">
+  <div class="hero-overlay">
+    <div class="hero-content">
+      <h1 class="hero-title">{{ heroMovie.title }}</h1>
+      <p class="hero-overview">{{ heroMovie.overview | slice:0:200 }}...</p>
+      <button class="btn-primary" (click)="goToMovie(heroMovie)">Ver Detalhes</button>
+    </div>
+  </div>
+  <div class="hero-dots">
+    <span *ngFor="let m of trendingMovies; let i = index" class="dot" [class.active]="i === heroIndex"
+      (click)="setHero(i)">
+    </span>
+  </div>
+</section>
+
+<!-- Search Bar -->
+<div class="search-section">
+  <div class="search-wrapper">
+    <span class="search-icon">🔍</span>
+    <input type="text" class="search-input" placeholder="Pesquisar filmes..." [(ngModel)]="searchQuery"
+      (ngModelChange)="onSearchChange()" />
+    <button class="clear-btn" *ngIf="searchQuery" (click)="clearSearch()">✕</button>
+  </div>
+</div>
+
+<!-- Loading -->
+<div class="loading-container" *ngIf="loading">
+  <div class="film-reel">🎞️</div>
+  <p>Carregando...</p>
+</div>
+
+<!-- Search Results -->
+<section class="movies-section" *ngIf="isSearching && !loading">
+  <div class="section-header">
+    <h2>Resultados para: <span class="highlight">"{{ searchQuery }}"</span></h2>
+    <span class="result-count" *ngIf="movies.length > 0">{{ movies.length }} filmes encontrados</span>
+  </div>
+  <div class="movies-grid" *ngIf="movies.length > 0; else noResults">
+    <app-movie-card *ngFor="let movie of movies" [movie]="movie" (click)="goToMovie(movie)">
+    </app-movie-card>
+  </div>
+  <ng-template #noResults>
+    <div class="no-results">
+      <span>🎭</span>
+      <p>Nenhum filme encontrado para "{{ searchQuery }}"</p>
+    </div>
+  </ng-template>
+</section>
+
+<!-- Trending -->
+<section class="movies-section" *ngIf="!isSearching && !loading">
+  <div class="section-header">
+    <h2><span class="section-icon">🔥</span> Em Alta Esta Semana</h2>
+  </div>
+  <div class="movies-grid">
+    <app-movie-card *ngFor="let movie of trendingMovies" [movie]="movie" (click)="goToMovie(movie)">
+    </app-movie-card>
+  </div>
+</section>

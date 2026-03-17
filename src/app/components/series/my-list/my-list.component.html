@@ -1,0 +1,91 @@
+<div class="my-list-page">
+  <div class="page-header">
+    <h1>📺 Minha Lista de Séries</h1>
+    <p class="subtitle">Gerencie suas séries</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card watching clickable" (click)="router.navigate(['/series-stats'])">
+      <span class="stat-icon">▶</span>
+      <span class="stat-number">{{ stats.watching }}</span>
+      <span class="stat-label">Assistindo</span>
+    </div>
+    <div class="stat-card watched clickable" (click)="router.navigate(['/series-stats'])">
+      <span class="stat-icon">✅</span>
+      <span class="stat-number">{{ stats.watched }}</span>
+      <span class="stat-label">Concluídas</span>
+    </div>
+    <div class="stat-card not-watched">
+      <span class="stat-icon">❌</span>
+      <span class="stat-number">{{ stats.not_watched }}</span>
+      <span class="stat-label">Não Vi</span>
+    </div>
+    <div class="stat-card want-to-watch">
+      <span class="stat-icon">⭐</span>
+      <span class="stat-number">{{ stats.want_to_watch }}</span>
+      <span class="stat-label">Quero Ver</span>
+    </div>
+    <div class="stat-card total">
+      <span class="stat-icon">📺</span>
+      <span class="stat-number">{{ allSeries.length }}</span>
+      <span class="stat-label">Total</span>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters">
+    <button [class.active]="activeFilter === 'all'" (click)="applyFilter('all')">
+      Todos ({{ allSeries.length }})
+    </button>
+    <button [class.active]="activeFilter === 'watching'" (click)="applyFilter('watching')">
+      ▶ Assistindo ({{ stats.watching }})
+    </button>
+    <button [class.active]="activeFilter === 'watched'" (click)="applyFilter('watched')">
+      ✅ Concluídas ({{ stats.watched }})
+    </button>
+    <button [class.active]="activeFilter === 'not_watched'" (click)="applyFilter('not_watched')">
+      ❌ Não Vi ({{ stats.not_watched }})
+    </button>
+    <button [class.active]="activeFilter === 'want_to_watch'" (click)="applyFilter('want_to_watch')">
+      ⭐ Quero Ver ({{ stats.want_to_watch }})
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-container" *ngIf="loading">
+    <div class="film-reel">📺</div>
+    <p>Carregando sua lista...</p>
+  </div>
+
+  <!-- Series List -->
+  <div class="movies-list" *ngIf="!loading">
+    <div class="empty-state" *ngIf="filteredSeries.length === 0">
+      <span>📺</span>
+      <p *ngIf="allSeries.length === 0">Sua lista está vazia. Comece explorando séries!</p>
+      <p *ngIf="allSeries.length > 0">Nenhuma série nesta categoria.</p>
+    </div>
+
+    <div class="movie-row" *ngFor="let series of filteredSeries" (click)="goToSeries(series.series_id)">
+      <img [src]="getPosterUrl(series.poster_path)" [alt]="series.series_name" class="movie-poster" />
+
+      <div class="movie-info">
+        <h3 class="movie-title">{{ series.series_name }}</h3>
+        <div class="movie-meta">
+          <span class="year">{{ getYear(series.first_air_date) }}</span>
+          <span class="rating">★ {{ series.vote_average.toFixed(1) }}</span>
+        </div>
+      </div>
+
+      <div class="movie-status">
+        <span class="status-badge" [class]="series.status">
+          {{ getStatusLabel(series.status) }}
+        </span>
+      </div>
+
+      <button class="remove-btn" (click)="removeSeries($event, series.series_id)" title="Remover da lista">
+        🗑️
+      </button>
+    </div>
+  </div>
+</div>

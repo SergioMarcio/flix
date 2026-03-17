@@ -1,0 +1,98 @@
+.stats-page {
+  padding: 84px 2rem 4rem;
+  max-width: 860px;
+  margin: 0 auto;
+
+  .page-header {
+    margin-bottom: 2.5rem;
+    h1 { font-size: 2rem; font-weight: 900; color: #fff; font-family: 'Georgia', serif; margin-bottom: 0.3rem; }
+    .subtitle { color: rgba(255,255,255,0.4); font-size: 0.95rem; }
+  }
+}
+
+.loading-screen {
+  display: flex; flex-direction: column; align-items: center; padding: 5rem; color: rgba(255,255,255,0.5);
+  .spinner-icon { font-size: 3rem; margin-bottom: 1rem; animation: pulse 1.5s ease-in-out infinite; }
+}
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.4;} }
+
+.time-hero {
+  background: linear-gradient(135deg, rgba(212,175,55,0.12), rgba(212,175,55,0.04));
+  border: 1px solid rgba(212,175,55,0.3); border-radius: 20px;
+  padding: 3rem 2rem; margin-bottom: 2rem; text-align: center;
+
+  .time-display { margin-bottom: 2rem;
+    .time-block { display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+    .time-unit { display: flex; flex-direction: column; align-items: center;
+      .time-value { font-size: clamp(4rem, 12vw, 8rem); font-weight: 900; color: #D4AF37; line-height: 1; font-family: 'Georgia', serif; text-shadow: 0 0 40px rgba(212,175,55,0.4); }
+      .time-label { font-size: 0.85rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 2px; margin-top: 0.3rem; }
+    }
+    .time-separator { font-size: 5rem; font-weight: 900; color: rgba(212,175,55,0.4); line-height: 1; margin-bottom: 1.8rem; }
+    .no-time { p { color: rgba(255,255,255,0.5); margin-bottom: 0.5rem; font-size: 1.1rem; } .hint { font-size: 0.85rem; color: rgba(212,175,55,0.6); } }
+  }
+
+  .time-equivalents { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;
+    .equiv-card { display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
+      .equiv-icon { font-size: 1.3rem; }
+      .equiv-value { font-size: 1.4rem; font-weight: 700; color: #fff; }
+      .equiv-label { font-size: 0.75rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1px; }
+    }
+  }
+}
+
+.counters-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem;
+
+  .counter-card {
+    background: rgba(255,255,255,0.04); border-radius: 14px; padding: 1.5rem 1rem;
+    text-align: center; border: 1px solid rgba(255,255,255,0.07);
+    display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
+
+    .counter-icon { font-size: 1.6rem; }
+    .counter-value { font-size: 2rem; font-weight: 900; color: #fff; }
+    .counter-label { font-size: 0.75rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1px; }
+
+    &.total    { border-color: rgba(255,255,255,0.15); }
+    &.watching { border-color: rgba(99,102,241,0.3); }
+    &.watched  { border-color: rgba(34,197,94,0.3); }
+    &.want     { border-color: rgba(212,175,55,0.3); }
+  }
+}
+
+.section-title {
+  font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 0.6rem;
+
+  .count-badge {
+    background: rgba(212,175,55,0.2); color: #D4AF37; font-size: 0.75rem;
+    padding: 0.2rem 0.6rem; border-radius: 20px; font-weight: 700;
+  }
+}
+
+.series-rows {
+  display: flex; flex-direction: column; gap: 0.6rem;
+
+  .series-row {
+    display: flex; align-items: center; gap: 1rem;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px; padding: 0.8rem; cursor: pointer; transition: all 0.2s;
+    &:hover { background: rgba(255,255,255,0.08); border-color: rgba(212,175,55,0.3); }
+
+    img { width: 40px; height: 60px; object-fit: cover; border-radius: 5px; flex-shrink: 0; background: #1a1a1a; }
+
+    .series-info { flex: 1; min-width: 0;
+      .series-name { display: block; font-size: 0.9rem; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .series-episodes { display: block; font-size: 0.78rem; color: rgba(255,255,255,0.4); margin-top: 0.2rem; }
+    }
+
+    .series-time {
+      flex-shrink: 0; text-align: right;
+      .time-label { font-size: 0.85rem; color: #D4AF37; font-weight: 600; }
+      .no-time { font-size: 0.8rem; color: rgba(255,255,255,0.3); }
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .counters-grid { grid-template-columns: repeat(3, 1fr); }
+}

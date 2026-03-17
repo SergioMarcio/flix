@@ -1,6 +1,6 @@
+import { AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { AsyncPipe } from '@angular/common';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { SplashScreenComponent } from './components/splash-screen/splash-screen.component';
 import { SupabaseService } from './services/supabase.service';
@@ -15,5 +15,5 @@ import { SupabaseService } from './services/supabase.service';
 export class AppComponent {
   splashDone = false;
 
-  constructor(public supabase: SupabaseService) {}
+  constructor(public supabase: SupabaseService) { }
 }

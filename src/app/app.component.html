@@ -1,9 +1,9 @@
 @if (!splashDone) {
-  <app-splash-screen (done)="splashDone = true"></app-splash-screen>
+<app-splash-screen (done)="splashDone = true"></app-splash-screen>
 }
 
 @if (supabase.currentUser$ | async) {
-  <app-navbar></app-navbar>
+<app-navbar></app-navbar>
 }
 <main class="app-main">
   <router-outlet></router-outlet>

@@ -1,0 +1,167 @@
+<div class="stats-page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <h1>⏱️ Tempo de Tela</h1>
+    <p class="subtitle">Quanto tempo você passou assistindo filmes</p>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-screen" *ngIf="loading">
+    <div class="film-reel">🎞️</div>
+    <p>Calculando seu tempo...</p>
+  </div>
+
+  <ng-container *ngIf="!loading">
+
+    <!-- Hero: Tempo Total -->
+    <div class="time-hero">
+      <div class="time-display">
+        <div class="time-block" *ngIf="totalHours > 0 || remainingMinutes > 0; else noTime">
+          <div class="time-unit">
+            <span class="time-value">{{ totalHours }}</span>
+            <span class="time-label">horas</span>
+          </div>
+          <span class="time-separator">:</span>
+          <div class="time-unit">
+            <span class="time-value">{{ remainingMinutes }}</span>
+            <span class="time-label">minutos</span>
+          </div>
+        </div>
+        <ng-template #noTime>
+          <div class="no-time">
+            <p>Nenhum tempo registrado ainda.</p>
+            <p class="hint">Marque filmes como "Vi" para contabilizar o tempo!</p>
+          </div>
+        </ng-template>
+      </div>
+
+      <div class="time-equivalents" *ngIf="totalMinutes > 0">
+        <div class="equiv-card" *ngIf="totalDays > 0">
+          <span class="equiv-icon">📅</span>
+          <span class="equiv-value">{{ totalDays }}</span>
+          <span class="equiv-label">dias completos</span>
+        </div>
+        <div class="equiv-card">
+          <span class="equiv-icon">🎬</span>
+          <span class="equiv-value">{{ watchedMovies.length }}</span>
+          <span class="equiv-label">filmes</span>
+        </div>
+        <div class="equiv-card" *ngIf="averageRuntime > 0">
+          <span class="equiv-icon">⌛</span>
+          <span class="equiv-value">{{ formatRuntime(averageRuntime) }}</span>
+          <span class="equiv-label">duração média</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Breakdown Gostei / Não Gostei / Não Avaliado -->
+    <div class="like-breakdown" *ngIf="watchedCount > 0">
+      <h2 class="section-title">Sua avaliação dos filmes vistos</h2>
+      <div class="like-cards">
+        <div class="like-card liked" [class.active]="likeFilter === 'liked'" (click)="setLikeFilter('liked')">
+          <div class="like-card-header">
+            <span class="like-icon">👍</span>
+            <span class="like-title">Gostei</span>
+          </div>
+          <div class="like-card-count">{{ likedCount }} {{ likedCount === 1 ? 'filme' : 'filmes' }}</div>
+          <div class="like-card-time">{{ likedMinutes > 0 ? formatRuntime(likedMinutes) : '—' }}</div>
+        </div>
+        <div class="like-card disliked" [class.active]="likeFilter === 'disliked'" (click)="setLikeFilter('disliked')">
+          <div class="like-card-header">
+            <span class="like-icon">👎</span>
+            <span class="like-title">Não gostei</span>
+          </div>
+          <div class="like-card-count">{{ dislikedCount }} {{ dislikedCount === 1 ? 'filme' : 'filmes' }}</div>
+          <div class="like-card-time">{{ dislikedMinutes > 0 ? formatRuntime(dislikedMinutes) : '—' }}</div>
+        </div>
+        <div class="like-card unevaluated" [class.active]="likeFilter === 'unevaluated'"
+          (click)="setLikeFilter('unevaluated')">
+          <div class="like-card-header">
+            <span class="like-icon">🤷</span>
+            <span class="like-title">Sem avaliação</span>
+          </div>
+          <div class="like-card-count">{{ unevaluatedCount }} {{ unevaluatedCount === 1 ? 'filme' : 'filmes' }}</div>
+          <div class="like-card-time">{{ unevaluatedMinutes > 0 ? formatRuntime(unevaluatedMinutes) : '—' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contadores Gerais -->
+    <!-- <div class="counters-grid">
+      <div class="counter-card watched">
+        <span class="counter-icon">✅</span>
+        <span class="counter-value">{{ watchedCount }}</span>
+        <span class="counter-label">Filmes Vistos</span>
+      </div>
+      <div class="counter-card want">
+        <span class="counter-icon">⭐</span>
+        <span class="counter-value">{{ wantToWatchCount }}</span>
+        <span class="counter-label">Quero Ver</span>
+      </div>
+      <div class="counter-card not">
+        <span class="counter-icon">❌</span>
+        <span class="counter-value">{{ notWatchedCount }}</span>
+        <span class="counter-label">Não Vi</span>
+      </div>
+    </div> -->
+
+    <!-- Barra de Progresso -->
+    <div class="progress-section" *ngIf="watchedCount + wantToWatchCount + notWatchedCount > 0">
+      <div class="progress-header">
+        <span>Filmes assistidos da sua lista</span>
+        <span class="progress-percent">{{ getProgressPercent() }}%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="getProgressPercent()"></div>
+      </div>
+    </div>
+
+    <!-- Lista de filmes vistos com duração -->
+    <div class="watched-list" *ngIf="watchedMovies.length > 0">
+      <h2 class="section-title">
+        <span *ngIf="!likeFilter">🎞️ Filmes contabilizados</span>
+        <span *ngIf="likeFilter === 'liked'">👍 Filmes que gostei</span>
+        <span *ngIf="likeFilter === 'disliked'">👎 Filmes que não gostei</span>
+        <span *ngIf="likeFilter === 'unevaluated'">🤷 Filmes sem avaliação</span>
+        <span class="count-badge">{{ filteredWatchedMovies.length }}</span>
+        <button class="clear-filter" *ngIf="likeFilter" (click)="likeFilter = null">✕ limpar filtro</button>
+      </h2>
+
+      <div class="movie-rows">
+        <div class="movie-row" *ngFor="let movie of filteredWatchedMovies" (click)="goToMovie(movie.movie_id)">
+          <img [src]="getPosterUrl(movie.poster_path)" [alt]="movie.movie_title" />
+          <div class="movie-info">
+            <span class="movie-name">{{ movie.movie_title }}</span>
+            <span class="movie-year">{{ getYear(movie.release_date) }}</span>
+          </div>
+          <div class="movie-time">
+            <span class="runtime-label">{{ formatRuntime(movie.runtime) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filmes sem duração registrada -->
+    <div class="no-runtime-section" *ngIf="moviesWithoutRuntime.length > 0">
+      <h2 class="section-title muted">
+        ⚠️ Sem duração registrada
+        <span class="count-badge muted">{{ moviesWithoutRuntime.length }}</span>
+      </h2>
+      <p class="hint-text">Clique em um desses filmes para registrar a duração automaticamente:</p>
+      <div class="movie-rows">
+        <div class="movie-row faded" *ngFor="let movie of moviesWithoutRuntime" (click)="goToMovie(movie.movie_id)">
+          <img [src]="getPosterUrl(movie.poster_path)" [alt]="movie.movie_title" />
+          <div class="movie-info">
+            <span class="movie-name">{{ movie.movie_title }}</span>
+            <span class="movie-year">{{ getYear(movie.release_date) }}</span>
+          </div>
+          <div class="movie-time">
+            <span class="no-runtime">— sem dados</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </ng-container>
+</div>

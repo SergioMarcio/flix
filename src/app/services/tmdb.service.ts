@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
@@ -91,6 +91,33 @@ export interface TVSeasonDetail extends TVSeason {
   episodes: TVEpisode[];
 }
 
+export interface EpisodeCastMember {
+  id: number;
+  name: string;
+  character: string;
+  profile_path: string | null;
+  order: number;
+}
+
+export interface EpisodeCrewMember {
+  id: number;
+  name: string;
+  job: string;
+  department: string;
+  profile_path: string | null;
+}
+
+export interface EpisodeCredits {
+  cast: EpisodeCastMember[];
+  crew: EpisodeCrewMember[];
+}
+
+export interface EpisodeStill {
+  file_path: string;
+  width: number;
+  height: number;
+}
+
 export interface TVResponse {
   page: number;
   results: TVShow[];
@@ -106,7 +133,7 @@ export class TmdbService {
   private apiKey = environment.tmdbApiKey;
   private imageBaseUrl = environment.tmdbImageBaseUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   private buildParams(extra: Record<string, string> = {}): string {
     const params = new URLSearchParams({
@@ -208,6 +235,19 @@ export class TmdbService {
   getShowVideos(id: number): Observable<{ results: MovieVideo[] }> {
     return this.http.get<{ results: MovieVideo[] }>(
       `${this.baseUrl}/tv/${id}/videos?${this.buildParams()}`
+    );
+  }
+
+  getEpisodeCredits(showId: number, seasonNumber: number, episodeNumber: number): Observable<EpisodeCredits> {
+    return this.http.get<EpisodeCredits>(
+      `${this.baseUrl}/tv/${showId}/season/${seasonNumber}/episode/${episodeNumber}/credits?${this.buildParams()}`
+    );
+  }
+
+  getEpisodeImages(showId: number, seasonNumber: number, episodeNumber: number): Observable<{ stills: EpisodeStill[] }> {
+    const params = new URLSearchParams({ api_key: this.apiKey });
+    return this.http.get<{ stills: EpisodeStill[] }>(
+      `${this.baseUrl}/tv/${showId}/season/${seasonNumber}/episode/${episodeNumber}/images?${params.toString()}`
     );
   }
 }

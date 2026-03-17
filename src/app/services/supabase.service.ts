@@ -227,9 +227,9 @@ export class SupabaseService {
       stats[item.status]++;
       if (item.status === 'watched' && item.runtime) {
         stats.total_minutes += item.runtime;
-        if (item.liked === true)  { stats.liked_minutes       += item.runtime; stats.liked_count++; }
+        if (item.liked === true) { stats.liked_minutes += item.runtime; stats.liked_count++; }
         else if (item.liked === false) { stats.disliked_minutes += item.runtime; stats.disliked_count++; }
-        else                          { stats.unevaluated_minutes += item.runtime; stats.unevaluated_count++; }
+        else { stats.unevaluated_minutes += item.runtime; stats.unevaluated_count++; }
       }
     });
     return stats;
@@ -334,8 +334,8 @@ export class SupabaseService {
       if (e.runtime) stats.total_minutes += e.runtime;
     });
     (seriesRes.data || []).forEach((s: { status: SeriesStatus }) => {
-      if (s.status === 'watching')      stats.watching++;
-      if (s.status === 'watched')       stats.watched++;
+      if (s.status === 'watching') stats.watching++;
+      if (s.status === 'watched') stats.watched++;
       if (s.status === 'want_to_watch') stats.want_to_watch++;
     });
     return stats;

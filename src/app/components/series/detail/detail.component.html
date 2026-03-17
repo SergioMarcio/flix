@@ -1,0 +1,90 @@
+<div class="loading-screen" *ngIf="loading">
+  <div class="film-reel">📺</div>
+  <p>Carregando série...</p>
+</div>
+
+<div class="detail-page" *ngIf="!loading && show">
+  <div class="backdrop" [style.background-image]="'url(' + getBackdropUrl() + ')'">
+    <div class="backdrop-overlay"></div>
+  </div>
+
+  <div class="detail-content">
+    <button class="back-btn" (click)="goBack()">← Voltar</button>
+
+    <div class="show-layout">
+      <!-- Poster + Actions -->
+      <div class="poster-section">
+        <img [src]="getPosterUrl()" [alt]="show.name" class="poster-img" />
+
+        <div class="status-section">
+          <h3 class="status-title">Minha Lista</h3>
+          <div class="status-buttons">
+            <button class="status-btn watching" [class.active]="status === 'watching'" [disabled]="saving"
+              (click)="setStatus('watching')">▶ Assistindo</button>
+            <button class="status-btn watched" [class.active]="status === 'watched'" [disabled]="saving"
+              (click)="setStatus('watched')">✅ Concluída</button>
+            <button class="status-btn want" [class.active]="status === 'want_to_watch'" [disabled]="saving"
+              (click)="setStatus('want_to_watch')">⭐ Quero Ver</button>
+            <button class="status-btn not-watched" [class.active]="status === 'not_watched'" [disabled]="saving"
+              (click)="setStatus('not_watched')">❌ Não Assisti</button>
+          </div>
+          <button class="remove-btn" *ngIf="status" (click)="removeStatus()" [disabled]="saving">
+            🗑️ Remover da lista
+          </button>
+        </div>
+      </div>
+
+      <!-- Info -->
+      <div class="info-section">
+        <div class="show-meta">
+          <span class="year">{{ getYear() }}</span>
+          <span class="seasons-count" *ngIf="show.number_of_seasons">{{ show.number_of_seasons }} temp.</span>
+          <span class="episodes-count" *ngIf="show.number_of_episodes">{{ show.number_of_episodes }} ep.</span>
+          <span class="runtime" *ngIf="getRuntime()">{{ getRuntime() }}/ep.</span>
+          <span class="rating">★ {{ getRating() }}</span>
+        </div>
+
+        <h1 class="show-title">{{ show.name }}</h1>
+        <p class="tagline" *ngIf="show.tagline">"{{ show.tagline }}"</p>
+
+        <div class="genres">
+          <span class="genre-tag" *ngFor="let g of show.genres">{{ g.name }}</span>
+        </div>
+
+        <div class="section">
+          <h3>Sinopse</h3>
+          <p class="overview">{{ show.overview || 'Sinopse não disponível.' }}</p>
+        </div>
+
+        <button class="trailer-btn" *ngIf="trailer" (click)="openTrailer()">
+          ▶ Assistir Trailer
+        </button>
+      </div>
+    </div>
+
+    <!-- Seasons -->
+    <div class="seasons-section" *ngIf="visibleSeasons.length > 0">
+      <h2 class="section-title">Temporadas</h2>
+      <div class="seasons-grid">
+        <div class="season-card" *ngFor="let season of visibleSeasons" (click)="goToSeason(season)">
+          <img [src]="getSeasonPoster(season.poster_path)" [alt]="season.name" class="season-poster" />
+          <div class="season-info">
+            <p class="season-name">{{ season.name }}</p>
+            <p class="season-episodes">{{ season.episode_count }} episódios</p>
+            <p class="season-year">{{ season.air_date?.substring(0,4) }}</p>
+          </div>
+          <span class="season-arrow">›</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Trailer Modal -->
+<div class="trailer-modal" *ngIf="showTrailer" (click)="closeTrailer()">
+  <div class="trailer-container" (click)="$event.stopPropagation()">
+    <button class="close-trailer" (click)="closeTrailer()">✕</button>
+    <iframe [src]="'https://www.youtube.com/embed/' + trailer?.key + '?autoplay=1' | safeUrl" frameborder="0"
+      allowfullscreen allow="autoplay; encrypted-media"></iframe>
+  </div>
+</div>

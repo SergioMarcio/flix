@@ -1,0 +1,132 @@
+import { CommonModule } from '@angular/common';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Subject, debounceTime, distinctUntilChanged, of, switchMap, takeUntil } from 'rxjs';
+import { TVResponse, TVShow, TmdbService } from '../../../services/tmdb.service';
+
+@Component({
+  selector: 'app-series-home',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './home.component.html',
+  styleUrl: './home.component.scss'
+})
+export class SeriesHomeComponent implements OnInit, OnDestroy {
+  searchQuery = '';
+  shows: TVShow[] = [];
+  trendingShows: TVShow[] = [];
+  heroShow: TVShow | null = null;
+  heroFading = false;
+  heroIndex = 0;
+  loading = false;
+  isSearching = false;
+  currentPage = 1;
+  totalPages = 1;
+
+  private searchSubject = new Subject<string>();
+  private destroy$ = new Subject<void>();
+  private heroInterval: ReturnType<typeof setInterval> | null = null;
+
+  constructor(private tmdb: TmdbService, private router: Router) { }
+
+  ngOnInit(): void {
+    this.loadTrending();
+
+    this.searchSubject.pipe(
+      debounceTime(400),
+      distinctUntilChanged(),
+      switchMap(query => {
+        if (!query.trim()) {
+          this.isSearching = false;
+          return of(null);
+        }
+        this.loading = true;
+        this.isSearching = true;
+        return this.tmdb.searchShows(query, 1);
+      }),
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: (response) => {
+        this.loading = false;
+        if (response) {
+          this.shows = response.results;
+          this.currentPage = response.page;
+          this.totalPages = response.total_pages;
+        } else {
+          this.shows = [];
+        }
+      },
+      error: () => { this.loading = false; }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    if (this.heroInterval) clearInterval(this.heroInterval);
+  }
+
+  loadTrending(): void {
+    this.loading = true;
+    this.tmdb.getTrendingShows().pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response: TVResponse) => {
+        this.trendingShows = response.results;
+        this.heroIndex = Math.floor(Math.random() * response.results.length);
+        this.heroShow = response.results[this.heroIndex] || null;
+        this.loading = false;
+        this.startHeroRotation();
+      },
+      error: () => { this.loading = false; }
+    });
+  }
+
+  startHeroRotation(): void {
+    if (this.heroInterval) clearInterval(this.heroInterval);
+    this.heroInterval = setInterval(() => {
+      this.heroFading = true;
+      setTimeout(() => {
+        this.heroIndex = (this.heroIndex + 1) % this.trendingShows.length;
+        this.heroShow = this.trendingShows[this.heroIndex];
+        this.heroFading = false;
+      }, 500);
+    }, 5000);
+  }
+
+  setHero(index: number): void {
+    if (index === this.heroIndex) return;
+    this.heroFading = true;
+    setTimeout(() => {
+      this.heroIndex = index;
+      this.heroShow = this.trendingShows[index];
+      this.heroFading = false;
+      this.startHeroRotation();
+    }, 500);
+  }
+
+  onSearchChange(): void {
+    this.searchSubject.next(this.searchQuery);
+  }
+
+  clearSearch(): void {
+    this.searchQuery = '';
+    this.isSearching = false;
+    this.shows = [];
+  }
+
+  goToShow(show: TVShow): void {
+    this.router.navigate(['/series', show.id]);
+  }
+
+  getBackdropUrl(show: TVShow): string {
+    return this.tmdb.getBackdropUrl(show.backdrop_path);
+  }
+
+  getImageUrl(path: string): string {
+    return this.tmdb.getImageUrl(path, 'w342');
+  }
+
+  getYear(date: string): string {
+    return date ? date.substring(0, 4) : '';
+  }
+}
