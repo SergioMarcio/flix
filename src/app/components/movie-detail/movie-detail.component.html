@@ -1,0 +1,110 @@
+<!-- Loading -->
+<div class="loading-screen" *ngIf="loading">
+  <div class="film-reel">🎞️</div>
+  <p>Carregando filme...</p>
+</div>
+
+<div class="detail-page" *ngIf="!loading && movie">
+  <!-- Backdrop -->
+  <div class="backdrop" [style.background-image]="'url(' + getBackdropUrl() + ')'">
+    <div class="backdrop-overlay"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="detail-content">
+    <button class="back-btn" (click)="goBack()">← Voltar</button>
+
+    <div class="movie-layout">
+      <!-- Poster -->
+      <div class="poster-section">
+        <img [src]="getPosterUrl()" [alt]="movie.title" class="poster-img" />
+
+        <!-- Status Buttons -->
+        <div class="status-section">
+          <h3 class="status-title">Minha Avaliação</h3>
+          <div class="status-buttons">
+            <button class="status-btn watched" [class.active]="status === 'watched'" [disabled]="saving"
+              (click)="setStatus('watched')">
+              ✅ Vi
+            </button>
+            <button class="status-btn not-watched" [class.active]="status === 'not_watched'" [disabled]="saving"
+              (click)="setStatus('not_watched')">
+              ❌ Não Vi
+            </button>
+            <button class="status-btn want-to-watch" [class.active]="status === 'want_to_watch'" [disabled]="saving"
+              (click)="setStatus('want_to_watch')">
+              ⭐ Quero Ver
+            </button>
+          </div>
+          <div class="like-section" *ngIf="status === 'watched'">
+            <p class="like-label">Gostou do filme?</p>
+            <div class="like-buttons">
+              <button class="like-btn liked" [class.active]="liked === true" [disabled]="saving"
+                (click)="setLike(true)">
+                👍 Gostei
+              </button>
+              <button class="like-btn disliked" [class.active]="liked === false" [disabled]="saving"
+                (click)="setLike(false)">
+                👎 Não gostei
+              </button>
+            </div>
+          </div>
+
+          <button class="remove-btn" *ngIf="status" (click)="removeStatus()" [disabled]="saving">
+            🗑️ Remover da lista
+          </button>
+        </div>
+      </div>
+
+      <!-- Info -->
+      <div class="info-section">
+        <div class="movie-meta">
+          <span class="year">{{ getYear() }}</span>
+          <span class="runtime" *ngIf="movie.runtime">{{ getRuntime() }}</span>
+          <span class="rating">★ {{ getRating() }}</span>
+        </div>
+
+        <h1 class="movie-title">{{ movie.title }}</h1>
+
+        <p class="tagline" *ngIf="movie.tagline">"{{ movie.tagline }}"</p>
+
+        <div class="genres">
+          <span class="genre-tag" *ngFor="let genre of movie.genres">{{ genre.name }}</span>
+        </div>
+
+        <div class="section">
+          <h3>Sinopse</h3>
+          <p class="overview">{{ movie.overview || 'Sinopse não disponível.' }}</p>
+        </div>
+
+        <div class="section" *ngIf="movie.production_companies?.length">
+          <h3>Produção</h3>
+          <p class="companies">{{ getCompanies() }}</p>
+        </div>
+
+        <button class="trailer-btn" *ngIf="trailer" (click)="openTrailer()">
+          ▶ Assistir Trailer
+        </button>
+      </div>
+    </div>
+
+    <!-- Similar Movies -->
+    <div class="similar-section" *ngIf="similarMovies.length">
+      <h2 class="section-title">Filmes Similares</h2>
+      <div class="movies-grid">
+        <app-movie-card *ngFor="let m of similarMovies" [movie]="m" (click)="goToMovie(m)">
+        </app-movie-card>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Trailer Modal -->
+<div class="trailer-modal" *ngIf="showTrailer" (click)="closeTrailer()">
+  <div class="trailer-container" (click)="$event.stopPropagation()">
+    <button class="close-trailer" (click)="closeTrailer()">✕</button>
+    <iframe [src]="'https://www.youtube.com/embed/' + trailer?.key + '?autoplay=1' | safeUrl" frameborder="0"
+      allowfullscreen allow="autoplay; encrypted-media">
+    </iframe>
+  </div>
+</div>

@@ -1,0 +1,91 @@
+.movie-list-page {
+  padding: 84px 2rem 4rem;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  .page-header {
+    margin-bottom: 2rem;
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 900;
+      color: #fff;
+      font-family: 'Georgia', serif;
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+
+      .icon {
+        font-size: 1.8rem;
+      }
+    }
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem;
+  color: rgba(255, 255, 255, 0.5);
+
+  .film-reel {
+    font-size: 3rem;
+    animation: spin 1.5s linear infinite;
+    margin-bottom: 1rem;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.movies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1.2rem;
+}
+
+.load-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+
+  .load-more-btn {
+    background: linear-gradient(135deg, #D4AF37, #f0cb5a);
+    color: #000;
+    border: none;
+    padding: 0.8rem 3rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border-radius: 4px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
+    }
+  }
+}
+
+.loading-more {
+  text-align: center;
+  padding: 2rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .movies-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  }
+}

@@ -1,0 +1,54 @@
+<div class="sobre-page">
+
+  <div class="hero-section">
+    <div class="avatar">
+      <span>SM</span>
+    </div>
+    <h1 class="dev-name">Sérgio Marcio</h1>
+    <p class="dev-aka">a.k.a. <span class="aka-highlight">Sergex</span></p>
+    <p class="dev-tagline">Desenvolvedor apaixonado por tecnologia e cinema</p>
+  </div>
+
+  <div class="content">
+
+    <section class="section">
+      <h2 class="section-title">Sobre o Projeto</h2>
+      <p class="section-text">
+        <strong>FLIX</strong> é uma plataforma pessoal para catalogar e gerenciar filmes e séries.
+        Pesquise, adicione à sua lista, acompanhe o que assistiu, avalie e visualize
+        estatísticas detalhadas do seu tempo de tela.
+      </p>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Tecnologias Utilizadas</h2>
+      <div class="tech-grid">
+        @for (tech of techs; track tech.name) {
+          <div class="tech-card" [style.--accent]="tech.color">
+            <span class="tech-icon">{{ tech.icon }}</span>
+            <div>
+              <div class="tech-name">{{ tech.name }}</div>
+              <div class="tech-desc">{{ tech.desc }}</div>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="section contact-section">
+      <h2 class="section-title">Contato</h2>
+      <div class="contact-links">
+        <a href="https://github.com/sergex" target="_blank" class="contact-btn github">
+          <span>⌥</span> GitHub
+        </a>
+      </div>
+    </section>
+
+    <div class="back-link">
+      <a routerLink="/">← Voltar ao início</a>
+    </div>
+
+  </div>
+
+  <div class="version-badge">v1.0.0</div>
+</div>

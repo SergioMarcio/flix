@@ -1,0 +1,66 @@
+<div class="loading-screen" *ngIf="loading">
+  <div class="spinner-icon">📺</div>
+  <p>Carregando temporada...</p>
+</div>
+
+<div class="season-page" *ngIf="!loading && season">
+  <div class="page-header">
+    <button class="back-btn" (click)="goBack()">← Voltar</button>
+    <div class="header-info">
+      <h1 class="season-title">{{ season.name }}</h1>
+      <p class="season-year" *ngIf="season.air_date">{{ getAirYear(season.air_date) }}</p>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-section">
+    <div class="progress-header">
+      <span class="progress-text">
+        <strong>{{ watchedCount }}</strong> / {{ totalCount }} episódios vistos
+      </span>
+      <span class="progress-percent">{{ progressPercent }}%</span>
+      <button class="mark-all-btn" *ngIf="watchedCount < totalCount" (click)="markAllWatched()" [disabled]="saving">
+        ✅ Marcar todos
+      </button>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" [style.width.%]="progressPercent"></div>
+    </div>
+  </div>
+
+  <!-- Episodes -->
+  <div class="episodes-list">
+    <div
+      class="episode-row"
+      *ngFor="let ep of season.episodes"
+      [class.watched]="isWatched(ep)"
+      (click)="toggleEpisode(ep)"
+    >
+      <div class="ep-check">
+        <span class="check-icon">{{ isWatched(ep) ? '✅' : '⬜' }}</span>
+      </div>
+
+      <div class="ep-still" *ngIf="ep.still_path">
+        <img [src]="getStillUrl(ep.still_path)" [alt]="ep.name" />
+      </div>
+      <div class="ep-still placeholder" *ngIf="!ep.still_path">
+        <span>📺</span>
+      </div>
+
+      <div class="ep-info">
+        <div class="ep-header">
+          <span class="ep-number">E{{ ep.episode_number }}</span>
+          <span class="ep-name">{{ ep.name }}</span>
+        </div>
+        <p class="ep-overview" *ngIf="ep.overview">
+          {{ ep.overview | slice:0:120 }}{{ ep.overview.length > 120 ? '...' : '' }}
+        </p>
+        <div class="ep-meta">
+          <span class="ep-runtime" *ngIf="ep.runtime">{{ formatRuntime(ep.runtime) }}</span>
+          <span class="ep-date" *ngIf="ep.air_date">{{ ep.air_date | date:'dd/MM/yyyy' }}</span>
+          <span class="ep-rating" *ngIf="ep.vote_average > 0">★ {{ ep.vote_average.toFixed(1) }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

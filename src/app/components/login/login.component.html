@@ -1,0 +1,51 @@
+<div class="login-page">
+  <div class="login-container">
+    <div class="brand">
+      <span class="brand-icon">🎬</span>
+      <span class="brand-name">FLIX</span>
+    </div>
+
+    <div class="tabs">
+      <button class="tab" [class.active]="mode === 'login'" (click)="setMode('login')">Entrar</button>
+      <button class="tab" [class.active]="mode === 'register'" (click)="setMode('register')">Criar conta</button>
+    </div>
+
+    <form (ngSubmit)="submit()" #form="ngForm">
+      <div class="field">
+        <label for="email">E-mail</label>
+        <input id="email" type="email" [(ngModel)]="email" name="email" placeholder="seu@email.com" autocomplete="email"
+          required />
+      </div>
+
+      <div class="field">
+        <label for="password">Senha</label>
+        <input id="password" type="password" [(ngModel)]="password" name="password" placeholder="••••••••"
+          autocomplete="{{ mode === 'login' ? 'current-password' : 'new-password' }}" required />
+      </div>
+
+      @if (mode === 'register') {
+      <div class="field">
+        <label for="confirmPassword">Confirmar senha</label>
+        <input id="confirmPassword" type="password" [(ngModel)]="confirmPassword" name="confirmPassword"
+          placeholder="••••••••" autocomplete="new-password" required />
+      </div>
+      }
+
+      @if (errorMessage) {
+      <div class="alert alert-error">{{ errorMessage }}</div>
+      }
+
+      @if (successMessage) {
+      <div class="alert alert-success">{{ successMessage }}</div>
+      }
+
+      <button type="submit" class="btn-submit" [disabled]="loading">
+        @if (loading) {
+        <span class="spinner"></span>
+        } @else {
+        {{ mode === 'login' ? 'Entrar' : 'Criar conta' }}
+        }
+      </button>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+<div class="movie-card" [class.has-status]="status">
+  <div class="poster-wrapper">
+    <img [src]="getImageUrl()" [alt]="movie.title" loading="lazy" />
+
+    <div class="rating-badge">
+      <span class="star">★</span> {{ getRating() }}
+    </div>
+
+    <!-- <div class="status-badge" [class]="getStatusClass()" *ngIf="status">
+      {{ getStatusLabel() }}
+    </div> -->
+
+    <div class="card-overlay">
+      <div class="movie-info-overlay">
+        <p class="movie-year">{{ getYear() }}</p>
+      </div>
+
+      <!-- <button class="status-btn" [class]="getStatusClass()" (click)="toggleStatusMenu($event)" [disabled]="saving">
+        <span *ngIf="!saving">{{ getStatusLabel() }}</span>
+        <span *ngIf="saving">...</span>
+      </button> -->
+
+      <div class="status-menu" *ngIf="showStatusMenu" (click)="$event.stopPropagation()">
+        <button class="menu-item watched" (click)="setStatus($event, 'watched')">
+          ✅ Vi
+        </button>
+        <button class="menu-item not-watched" (click)="setStatus($event, 'not_watched')">
+          ❌ Não Vi
+        </button>
+        <button class="menu-item want-to-watch" (click)="setStatus($event, 'want_to_watch')">
+          ⭐ Quero Ver
+        </button>
+        <button class="menu-item remove" *ngIf="status" (click)="removeStatus($event)">
+          🗑️ Remover
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-info">
+    <h3 class="movie-title">{{ movie.title }}</h3>
+  </div>
+</div>

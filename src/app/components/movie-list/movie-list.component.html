@@ -1,0 +1,25 @@
+<div class="movie-list-page">
+  <div class="page-header">
+    <h1><span class="icon">{{ pageIcon }}</span> {{ pageTitle }}</h1>
+  </div>
+
+  <div class="loading-container" *ngIf="loading && movies.length === 0">
+    <div class="film-reel">🎞️</div>
+    <p>Carregando...</p>
+  </div>
+
+  <div class="movies-grid" *ngIf="movies.length > 0">
+    <app-movie-card *ngFor="let movie of movies" [movie]="movie" (click)="goToMovie(movie)">
+    </app-movie-card>
+  </div>
+
+  <div class="load-more" *ngIf="currentPage < totalPages && !loading">
+    <button class="load-more-btn" (click)="loadMore()">
+      Carregar Mais
+    </button>
+  </div>
+
+  <div class="loading-more" *ngIf="loading && movies.length > 0">
+    <span>🎞️ Carregando mais...</span>
+  </div>
+</div>

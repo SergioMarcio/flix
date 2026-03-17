@@ -1,0 +1,144 @@
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #080808;
+  transition: opacity 0.7s ease, transform 0.7s ease;
+
+  &.hiding {
+    opacity: 0;
+    transform: scale(1.04);
+    pointer-events: none;
+  }
+}
+
+// Partículas de fundo
+.bg-particles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(212, 175, 55, 0.12);
+    animation: float linear infinite;
+
+    @for $i from 1 through 8 {
+      &[data-i="#{$i}"] {
+        $size: 60px + $i * 30px;
+        width: $size;
+        height: $size;
+        left: 5% + $i * 11%;
+        top: 10% + ($i % 4) * 20%;
+        animation-duration: 8s + $i * 2s;
+        animation-delay: -$i * 1.2s;
+        opacity: 0.4 + ($i % 3) * 0.1;
+      }
+    }
+  }
+}
+
+@keyframes float {
+  0%   { transform: translateY(0)   rotate(0deg); }
+  50%  { transform: translateY(-30px) rotate(180deg); }
+  100% { transform: translateY(0)   rotate(360deg); }
+}
+
+// Conteúdo central
+.splash-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  animation: fadeInUp 0.8s ease both;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  animation: fadeInUp 0.8s ease 0.1s both;
+
+  .logo-icon {
+    font-size: 3.5rem;
+    filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.5));
+    animation: pulse 2s ease infinite;
+  }
+
+  .logo-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 6rem;
+    font-weight: 400;
+    letter-spacing: 12px;
+    color: #D4AF37;
+    text-shadow:
+      0 0 30px rgba(212, 175, 55, 0.7),
+      0 0 80px rgba(212, 175, 55, 0.3);
+    line-height: 1;
+    padding-top: 10px;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.08); }
+}
+
+.tagline {
+  font-size: 0.85rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.3);
+  animation: fadeInUp 0.8s ease 0.3s both;
+}
+
+// Loader de 3 pontos
+.loader {
+  display: flex;
+  gap: 8px;
+  margin-top: 2.5rem;
+  animation: fadeInUp 0.8s ease 0.5s both;
+
+  span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #D4AF37;
+    animation: bounce 1.2s ease infinite;
+
+    &:nth-child(1) { animation-delay: 0s; }
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.4s; }
+  }
+}
+
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40%            { transform: scale(1);   opacity: 1; }
+}
+
+// Rodapé
+.splash-footer {
+  position: absolute;
+  bottom: 2rem;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.18);
+  letter-spacing: 1px;
+  animation: fadeInUp 0.8s ease 0.7s both;
+
+  strong {
+    color: rgba(212, 175, 55, 0.5);
+    font-style: italic;
+  }
+}

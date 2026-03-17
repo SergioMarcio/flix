@@ -1,0 +1,472 @@
+.stats-page {
+  padding: 84px 2rem 4rem;
+  max-width: 860px;
+  margin: 0 auto;
+
+  .page-header {
+    margin-bottom: 2.5rem;
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 900;
+      color: #fff;
+      font-family: 'Georgia', serif;
+      margin-bottom: 0.3rem;
+    }
+
+    .subtitle {
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 0.95rem;
+    }
+  }
+}
+
+// Loading
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5rem;
+  color: rgba(255, 255, 255, 0.5);
+
+  .film-reel {
+    font-size: 3rem;
+    animation: spin 1.5s linear infinite;
+    margin-bottom: 1rem;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Hero de tempo
+.time-hero {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.12), rgba(212, 175, 55, 0.04));
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+
+  .time-display {
+    margin-bottom: 2rem;
+
+    .time-block {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .time-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .time-value {
+        font-size: clamp(4rem, 12vw, 8rem);
+        font-weight: 900;
+        color: #D4AF37;
+        line-height: 1;
+        font-family: 'Georgia', serif;
+        text-shadow: 0 0 40px rgba(212, 175, 55, 0.4);
+      }
+
+      .time-label {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.5);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-top: 0.3rem;
+      }
+    }
+
+    .time-separator {
+      font-size: 5rem;
+      font-weight: 900;
+      color: rgba(212, 175, 55, 0.4);
+      line-height: 1;
+      margin-bottom: 1.8rem;
+    }
+
+    .no-time {
+      p {
+        color: rgba(255, 255, 255, 0.5);
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
+      }
+
+      .hint {
+        font-size: 0.85rem;
+        color: rgba(212, 175, 55, 0.6);
+      }
+    }
+  }
+
+  .time-equivalents {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+
+    .equiv-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.2rem;
+
+      .equiv-icon {
+        font-size: 1.3rem;
+      }
+
+      .equiv-value {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #fff;
+      }
+
+      .equiv-label {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.4);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+    }
+  }
+}
+
+// Liked / Disliked breakdown
+.like-breakdown {
+  margin-bottom: 2rem;
+
+  .like-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr 1fr;
+
+      .like-card.unevaluated {
+        grid-column: 1 / -1;
+      }
+    }
+  }
+
+  .like-card {
+    border-radius: 14px;
+    padding: 1.4rem 1.2rem;
+    border: 1px solid transparent;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    cursor: pointer;
+    transition: transform 0.15s, background 0.15s;
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+
+    &.liked {
+      background: rgba(34, 197, 94, 0.08);
+      border-color: rgba(34, 197, 94, 0.25);
+
+      &:hover,
+      &.active {
+        background: rgba(34, 197, 94, 0.18);
+        border-color: #22c55e;
+      }
+    }
+
+    &.disliked {
+      background: rgba(239, 68, 68, 0.08);
+      border-color: rgba(239, 68, 68, 0.25);
+
+      &:hover,
+      &.active {
+        background: rgba(239, 68, 68, 0.18);
+        border-color: #ef4444;
+      }
+    }
+
+    &.unevaluated {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.1);
+
+      &:hover,
+      &.active {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.3);
+      }
+    }
+
+    .like-card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      .like-icon {
+        font-size: 1.3rem;
+      }
+
+      .like-title {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: rgba(255, 255, 255, 0.5);
+      }
+    }
+
+    .like-card-count {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .like-card-time {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.45);
+    }
+  }
+}
+
+// Contadores
+.counters-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+
+  .counter-card {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 14px;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    transition: transform 0.2s;
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+
+    .counter-icon {
+      font-size: 1.6rem;
+    }
+
+    .counter-value {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .counter-label {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.45);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 0.2rem;
+    }
+
+    &.watched {
+      border-color: rgba(34, 197, 94, 0.25);
+    }
+
+    &.want {
+      border-color: rgba(212, 175, 55, 0.25);
+    }
+
+    &.not {
+      border-color: rgba(239, 68, 68, 0.2);
+    }
+  }
+}
+
+// Progress bar
+.progress-section {
+  margin-bottom: 2.5rem;
+
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 0.6rem;
+
+    .progress-percent {
+      color: #D4AF37;
+      font-weight: 700;
+    }
+  }
+
+  .progress-bar {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 3px;
+    overflow: hidden;
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(to right, #D4AF37, #f0cb5a);
+      border-radius: 3px;
+      transition: width 0.8s ease;
+    }
+  }
+}
+
+// Listas de filmes
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+
+  &.muted {
+    color: rgba(255, 255, 255, 0.45);
+  }
+
+  .count-badge {
+    background: rgba(212, 175, 55, 0.2);
+    color: #D4AF37;
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    font-weight: 700;
+
+    &.muted {
+      background: rgba(255, 255, 255, 0.07);
+      color: rgba(255, 255, 255, 0.35);
+    }
+  }
+
+  .clear-filter {
+    margin-left: auto;
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+    padding: 0.2rem 0.7rem;
+    font-size: 0.75rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s;
+
+    &:hover {
+      border-color: rgba(255, 255, 255, 0.5);
+      color: #fff;
+    }
+  }
+}
+
+.watched-list {
+  margin-bottom: 2.5rem;
+}
+
+.hint-text {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.35);
+  margin-bottom: 0.8rem;
+}
+
+.movie-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+
+  .movie-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 10px;
+    padding: 0.7rem;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(212, 175, 55, 0.25);
+    }
+
+    &.faded {
+      opacity: 0.55;
+    }
+
+    img {
+      width: 36px;
+      height: 54px;
+      object-fit: cover;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .movie-info {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+
+      .movie-name {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.9);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .movie-year {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.35);
+      }
+    }
+
+    .movie-time {
+      flex-shrink: 0;
+
+      .runtime-label {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #D4AF37;
+        white-space: nowrap;
+      }
+
+      .no-runtime {
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.25);
+      }
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .counters-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem;
+  }
+
+  .time-hero {
+    padding: 2rem 1rem;
+  }
+
+  .time-equivalents {
+    gap: 1.5rem;
+  }
+}

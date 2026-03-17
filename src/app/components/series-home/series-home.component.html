@@ -1,0 +1,75 @@
+<div class="series-home">
+
+  <!-- Hero -->
+  <div class="hero" *ngIf="!isSearching && heroShow" [style.background-image]="'url(' + getBackdropUrl(heroShow.backdrop_path) + ')'">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-badge">📺 Em Alta</div>
+      <h1 class="hero-title">{{ heroShow.name }}</h1>
+      <p class="hero-overview">{{ heroShow.overview | slice:0:180 }}{{ heroShow.overview?.length > 180 ? '...' : '' }}</p>
+      <button class="hero-btn" (click)="goToShow(heroShow)">Ver Detalhes</button>
+    </div>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="search-section">
+    <div class="search-bar">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        (ngModelChange)="onSearchChange()"
+        placeholder="Buscar séries..."
+        class="search-input"
+      />
+      <button *ngIf="searchQuery" class="clear-btn" (click)="clearSearch()">✕</button>
+    </div>
+  </div>
+
+  <!-- Search Results -->
+  <div class="content-section" *ngIf="isSearching">
+    <h2 class="section-title">Resultados para "{{ searchQuery }}"</h2>
+    <div class="shows-grid" *ngIf="shows.length > 0">
+      <div class="show-card" *ngFor="let show of shows" (click)="goToShow(show)">
+        <div class="card-poster">
+          <img [src]="getImageUrl(show.poster_path)" [alt]="show.name" />
+          <div class="card-overlay">
+            <span class="card-rating">★ {{ show.vote_average.toFixed(1) }}</span>
+          </div>
+        </div>
+        <div class="card-info">
+          <p class="card-title">{{ show.name }}</p>
+          <p class="card-year">{{ getYear(show.first_air_date) }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="empty-state" *ngIf="!loading && shows.length === 0">
+      <span>🔍</span>
+      <p>Nenhuma série encontrada.</p>
+    </div>
+  </div>
+
+  <!-- Trending -->
+  <div class="content-section" *ngIf="!isSearching && trendingShows.length > 0">
+    <h2 class="section-title">📺 Séries em Alta</h2>
+    <div class="shows-grid">
+      <div class="show-card" *ngFor="let show of trendingShows" (click)="goToShow(show)">
+        <div class="card-poster">
+          <img [src]="getImageUrl(show.poster_path)" [alt]="show.name" />
+          <div class="card-overlay">
+            <span class="card-rating">★ {{ show.vote_average.toFixed(1) }}</span>
+          </div>
+        </div>
+        <div class="card-info">
+          <p class="card-title">{{ show.name }}</p>
+          <p class="card-year">{{ getYear(show.first_air_date) }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="loading-screen" *ngIf="loading && !isSearching">
+    <div class="spinner-icon">📺</div>
+    <p>Carregando séries...</p>
+  </div>
+</div>

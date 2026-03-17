@@ -1,0 +1,163 @@
+import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { forkJoin } from 'rxjs';
+import { SafeUrlPipe } from '../../pipes/safe-url.pipe';
+import { SupabaseService, WatchStatus } from '../../services/supabase.service';
+import { Movie, MovieDetail, MovieVideo, TmdbService } from '../../services/tmdb.service';
+import { MovieCardComponent } from '../movie-card/movie-card.component';
+
+@Component({
+  selector: 'app-movie-detail',
+  standalone: true,
+  imports: [CommonModule, MovieCardComponent, SafeUrlPipe],
+  templateUrl: './movie-detail.component.html',
+  styleUrl: './movie-detail.component.scss'
+})
+export class MovieDetailComponent implements OnInit {
+  movie: MovieDetail | null = null;
+  similarMovies: Movie[] = [];
+  trailer: MovieVideo | null = null;
+  status: WatchStatus | null = null;
+  liked: boolean | null = null;
+  loading = true;
+  saving = false;
+  showTrailer = false;
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private tmdbService: TmdbService,
+    private supabaseService: SupabaseService
+  ) { }
+
+  ngOnInit(): void {
+    this.route.params.subscribe(params => {
+      const id = +params['id'];
+      this.loadMovie(id);
+    });
+  }
+
+  loadMovie(id: number): void {
+    this.loading = true;
+    this.showTrailer = false;
+
+    forkJoin({
+      detail: this.tmdbService.getMovieDetail(id),
+      videos: this.tmdbService.getMovieVideos(id),
+      similar: this.tmdbService.getSimilarMovies(id)
+    }).subscribe({
+      next: ({ detail, videos, similar }) => {
+        this.movie = detail;
+        this.similarMovies = similar.results.slice(0, 6);
+        this.trailer = videos.results.find(v => v.type === 'Trailer' && v.site === 'YouTube') || null;
+        this.loading = false;
+        this.loadStatus(id);
+        window.scrollTo(0, 0);
+      },
+      error: () => { this.loading = false; }
+    });
+  }
+
+  async loadStatus(id: number): Promise<void> {
+    try {
+      const movies = await this.supabaseService.getUserMovies();
+      const found = movies.find(m => m.movie_id === id);
+      this.status = found?.status ?? null;
+      this.liked = found?.liked ?? null;
+    } catch { }
+  }
+
+  async setStatus(newStatus: WatchStatus): Promise<void> {
+    if (!this.movie) return;
+    this.saving = true;
+    try {
+      await this.supabaseService.setMovieStatus({
+        movie_id: this.movie.id,
+        movie_title: this.movie.title,
+        poster_path: this.movie.poster_path,
+        release_date: this.movie.release_date,
+        vote_average: this.movie.vote_average,
+        runtime: this.movie.runtime || undefined,
+        status: newStatus
+      });
+      this.status = newStatus;
+    } catch (err) {
+      console.error('Erro ao salvar:', err);
+    } finally {
+      this.saving = false;
+    }
+  }
+
+  async setLike(value: boolean): Promise<void> {
+    if (!this.movie) return;
+    this.saving = true;
+    try {
+      const newLiked = this.liked === value ? null : value;
+      await this.supabaseService.setMovieLike(this.movie.id, newLiked);
+      this.liked = newLiked;
+    } catch (err) {
+      console.error('Erro ao salvar avaliação:', err);
+    } finally {
+      this.saving = false;
+    }
+  }
+
+  async removeStatus(): Promise<void> {
+    if (!this.movie) return;
+    this.saving = true;
+    try {
+      await this.supabaseService.removeMovieStatus(this.movie.id);
+      this.status = null;
+      this.liked = null;
+    } catch { }
+    this.saving = false;
+  }
+
+  getBackdropUrl(): string {
+    if (!this.movie) return '';
+    return this.tmdbService.getBackdropUrl(this.movie.backdrop_path);
+  }
+
+  getPosterUrl(): string {
+    if (!this.movie) return '';
+    return this.tmdbService.getImageUrl(this.movie.poster_path, 'w500');
+  }
+
+  getYear(): string {
+    if (!this.movie?.release_date) return '';
+    return this.movie.release_date.substring(0, 4);
+  }
+
+  getRuntime(): string {
+    if (!this.movie?.runtime) return '';
+    const h = Math.floor(this.movie.runtime / 60);
+    const m = this.movie.runtime % 60;
+    return h > 0 ? `${h}h ${m}min` : `${m}min`;
+  }
+
+  getRating(): string {
+    return this.movie?.vote_average.toFixed(1) || '0.0';
+  }
+
+  goToMovie(movie: Movie): void {
+    this.router.navigate(['/movie', movie.id]);
+  }
+
+  getCompanies(): string {
+    if (!this.movie?.production_companies) return '';
+    return this.movie.production_companies.slice(0, 3).map(c => c.name).join(', ');
+  }
+
+  goBack(): void {
+    this.router.navigate(['/']);
+  }
+
+  openTrailer(): void {
+    this.showTrailer = true;
+  }
+
+  closeTrailer(): void {
+    this.showTrailer = false;
+  }
+}

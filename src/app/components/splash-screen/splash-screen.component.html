@@ -1,0 +1,26 @@
+@if (visible) {
+  <div class="splash" [class.hiding]="hiding">
+
+    <div class="bg-particles">
+      @for (p of [1,2,3,4,5,6,7,8]; track p) {
+        <span class="particle" [attr.data-i]="p"></span>
+      }
+    </div>
+
+    <div class="splash-content">
+      <div class="logo-wrap">
+        <span class="logo-icon">🎬</span>
+        <span class="logo-text">FLIX</span>
+      </div>
+      <div class="tagline">Seu universo de filmes & séries</div>
+      <div class="loader">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+
+    <div class="splash-footer">
+      Desenvolvido por <strong>Sergex</strong>
+    </div>
+
+  </div>
+}

@@ -1,0 +1,55 @@
+<nav class="navbar">
+  <div class="navbar-brand">
+    <a routerLink="/" class="brand-logo">
+      <span class="brand-icon">🎬</span>
+      <span class="brand-name">FLIX</span>
+    </a>
+  </div>
+
+  <button class="menu-toggle" (click)="toggleMenu()" [class.open]="menuOpen">
+    <span></span><span></span><span></span>
+  </button>
+
+  <div class="navbar-links" [class.open]="menuOpen">
+
+    <!-- Módulo Filmes -->
+    <div class="nav-group">
+      <span class="nav-group-label">🎬 Filmes</span>
+      <div class="nav-group-links">
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="menuOpen = false">Início</a>
+        <a routerLink="/popular" routerLinkActive="active" (click)="menuOpen = false">Populares</a>
+        <a routerLink="/top-rated" routerLinkActive="active" (click)="menuOpen = false">Mais Votados</a>
+        <a routerLink="/now-playing" routerLinkActive="active" (click)="menuOpen = false">Em Cartaz</a>
+        <a routerLink="/my-list" routerLinkActive="active" class="pill gold" (click)="menuOpen = false">📋 Minha Lista</a>
+        <a routerLink="/stats" routerLinkActive="active" class="pill gold" (click)="menuOpen = false">⏱️ Stats</a>
+      </div>
+    </div>
+
+    <div class="nav-divider"></div>
+
+    <!-- Módulo Séries -->
+    <div class="nav-group">
+      <span class="nav-group-label">📺 Séries</span>
+      <div class="nav-group-links">
+        <a routerLink="/series" routerLinkActive="active" (click)="menuOpen = false">Explorar</a>
+        <a routerLink="/series-stats" routerLinkActive="active" class="pill indigo" (click)="menuOpen = false">⏱️ Stats</a>
+      </div>
+    </div>
+
+    <div class="nav-divider"></div>
+
+    <div class="nav-group">
+      <span class="nav-group-label">&nbsp;</span>
+      <div class="nav-group-links">
+        <a routerLink="/sobre" routerLinkActive="active" (click)="menuOpen = false">Sobre</a>
+      </div>
+    </div>
+
+    @if (userEmail) {
+      <div class="user-section">
+        <span class="user-email">{{ userEmail }}</span>
+        <button class="btn-logout" (click)="logout()">Sair</button>
+      </div>
+    }
+  </div>
+</nav>
