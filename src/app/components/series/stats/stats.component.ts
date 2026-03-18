@@ -30,7 +30,7 @@ export class SeriesStatsComponent implements OnInit {
     private supabase: SupabaseService,
     private tmdb: TmdbService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadStats();

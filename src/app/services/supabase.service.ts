@@ -287,14 +287,24 @@ export class SupabaseService {
 
   async getWatchedEpisodes(seriesId?: number): Promise<WatchedEpisode[]> {
     if (!this.client || !this.userId) return [];
-    let query = this.client
-      .from('user_episodes')
-      .select('*')
-      .eq('user_id', this.userId);
-    if (seriesId !== undefined) query = query.eq('series_id', seriesId);
-    const { data, error } = await query;
-    if (error) throw error;
-    return data || [];
+    const pageSize = 1000;
+    const all: WatchedEpisode[] = [];
+    let from = 0;
+    while (true) {
+      let query = this.client
+        .from('user_episodes')
+        .select('*')
+        .eq('user_id', this.userId)
+        .range(from, from + pageSize - 1);
+      if (seriesId !== undefined) query = query.eq('series_id', seriesId);
+      const { data, error } = await query;
+      if (error) throw error;
+      if (!data || data.length === 0) break;
+      all.push(...data);
+      if (data.length < pageSize) break;
+      from += pageSize;
+    }
+    return all;
   }
 
   async setEpisodeWatched(episode: WatchedEpisode): Promise<void> {
@@ -349,17 +359,31 @@ export class SupabaseService {
     const empty = { total_minutes: 0, total_episodes: 0, watching: 0, watched: 0, want_to_watch: 0 };
     if (!this.client || !this.userId) return empty;
 
-    const [episodesRes, seriesRes] = await Promise.all([
-      this.client.from('user_episodes').select('runtime').eq('user_id', this.userId),
-      this.client.from('user_series').select('status').eq('user_id', this.userId)
-    ]);
+    const pageSize = 1000;
+    const allEpisodes: { runtime: number | null }[] = [];
+    let from = 0;
+    while (true) {
+      const { data, error } = await this.client
+        .from('user_episodes')
+        .select('runtime')
+        .eq('user_id', this.userId)
+        .range(from, from + pageSize - 1);
+      if (error) break;
+      if (!data || data.length === 0) break;
+      allEpisodes.push(...data);
+      if (data.length < pageSize) break;
+      from += pageSize;
+    }
+
+    const { data: seriesData } = await this.client
+      .from('user_series').select('status').eq('user_id', this.userId);
 
     const stats = { ...empty };
-    (episodesRes.data || []).forEach((e: { runtime: number | null }) => {
+    allEpisodes.forEach((e) => {
       stats.total_episodes++;
       if (e.runtime) stats.total_minutes += e.runtime;
     });
-    (seriesRes.data || []).forEach((s: { status: SeriesStatus }) => {
+    (seriesData || []).forEach((s: { status: SeriesStatus }) => {
       if (s.status === 'watching') stats.watching++;
       if (s.status === 'watched') stats.watched++;
       if (s.status === 'want_to_watch') stats.want_to_watch++;
