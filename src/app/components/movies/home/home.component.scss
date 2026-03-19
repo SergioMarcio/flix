@@ -256,6 +256,38 @@
   }
 }
 
+.load-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+
+  .load-more-btn {
+    background: linear-gradient(135deg, #D4AF37, #f0cb5a);
+    color: #000;
+    border: none;
+    padding: 0.8rem 3rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border-radius: 4px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
+    }
+  }
+}
+
+.loading-more {
+  text-align: center;
+  padding: 2rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.9rem;
+}
+
 @media (max-width: 768px) {
   .hero .hero-content {
     padding: 0 1.5rem;

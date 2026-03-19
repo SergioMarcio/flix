@@ -21,6 +21,7 @@ export class MovieHomeComponent implements OnInit, OnDestroy {
   heroFading = false;
   heroIndex = 0;
   loading = false;
+  loadingMore = false;
   isSearching = false;
   currentPage = 1;
   totalPages = 1;
@@ -116,6 +117,22 @@ export class MovieHomeComponent implements OnInit, OnDestroy {
     this.searchQuery = '';
     this.isSearching = false;
     this.movies = [];
+  }
+
+  loadMoreSearch(): void {
+    if (this.loadingMore || this.currentPage >= this.totalPages) return;
+    this.loadingMore = true;
+    this.tmdbService.searchMovies(this.searchQuery, this.currentPage + 1)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.movies = [...this.movies, ...response.results];
+          this.currentPage = response.page;
+          this.totalPages = response.total_pages;
+          this.loadingMore = false;
+        },
+        error: () => { this.loadingMore = false; }
+      });
   }
 
   goToMovie(movie: Movie): void {

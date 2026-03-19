@@ -80,10 +80,15 @@ export class MySeriesListComponent implements OnInit {
 
   private sortList(list: UserSeries[]): UserSeries[] {
     return [...list].sort((a, b) => {
-      const cmp = this.sortBy === 'name'
-        ? a.series_name.localeCompare(b.series_name)
-        : (a.first_air_date || '').localeCompare(b.first_air_date || '');
-      return this.sortDir === 'asc' ? cmp : -cmp;
+      if (this.sortBy === 'name') {
+        const cmp = a.series_name.localeCompare(b.series_name);
+        return this.sortDir === 'asc' ? cmp : -cmp;
+      }
+      const yearA = (a.first_air_date || '').substring(0, 4);
+      const yearB = (b.first_air_date || '').substring(0, 4);
+      const yearCmp = yearA.localeCompare(yearB);
+      if (yearCmp !== 0) return this.sortDir === 'asc' ? yearCmp : -yearCmp;
+      return a.series_name.localeCompare(b.series_name);
     });
   }
 

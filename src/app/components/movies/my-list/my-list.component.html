@@ -6,17 +6,17 @@
 
   <!-- Stats -->
   <div class="stats-grid">
-    <div class="stat-card watched clickable" (click)="router.navigate(['/movie-stats'])">
+    <div class="stat-card watched clickable" (click)="applyFilter('watched')">
       <span class="stat-icon">✅</span>
       <span class="stat-number">{{ stats.watched }}</span>
       <span class="stat-label">Vi</span>
     </div>
-    <div class="stat-card want-to-watch">
+    <div class="stat-card want-to-watch clickable" (click)="applyFilter('want_to_watch')">
       <span class="stat-icon">⭐</span>
       <span class="stat-number">{{ stats.want_to_watch }}</span>
       <span class="stat-label">Quero Ver</span>
     </div>
-    <div class="stat-card total">
+    <div class="stat-card total clickable" (click)="applyFilter('all')">
       <span class="stat-icon">🎞️</span>
       <span class="stat-number">{{ allMovies.length }}</span>
       <span class="stat-label">Total</span>
@@ -24,7 +24,7 @@
   </div>
 
   <!-- Filters -->
-  <div class="filters">
+  <!-- <div class="filters">
     <button [class.active]="activeFilter === 'all'" (click)="applyFilter('all')">
       Todos ({{ allMovies.length }})
     </button>
@@ -34,7 +34,7 @@
     <button [class.active]="activeFilter === 'want_to_watch'" (click)="applyFilter('want_to_watch')">
       ⭐ Quero Ver ({{ stats.want_to_watch }})
     </button>
-  </div>
+  </div> -->
 
   <!-- Sort -->
   <div class="sort-bar">

@@ -61,10 +61,15 @@ export class MyListComponent implements OnInit {
 
   private sortList(list: UserMovie[]): UserMovie[] {
     return [...list].sort((a, b) => {
-      const cmp = this.sortBy === 'name'
-        ? a.movie_title.localeCompare(b.movie_title)
-        : (a.release_date || '').localeCompare(b.release_date || '');
-      return this.sortDir === 'asc' ? cmp : -cmp;
+      if (this.sortBy === 'name') {
+        const cmp = a.movie_title.localeCompare(b.movie_title);
+        return this.sortDir === 'asc' ? cmp : -cmp;
+      }
+      const yearA = (a.release_date || '').substring(0, 4);
+      const yearB = (b.release_date || '').substring(0, 4);
+      const yearCmp = yearA.localeCompare(yearB);
+      if (yearCmp !== 0) return this.sortDir === 'asc' ? yearCmp : -yearCmp;
+      return a.movie_title.localeCompare(b.movie_title);
     });
   }
 
