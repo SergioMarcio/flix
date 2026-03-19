@@ -46,6 +46,19 @@ export interface UserMovie {
   updated_at?: string;
 }
 
+export interface EpisodeComment {
+  id: string;
+  series_id: number;
+  season_number: number;
+  episode_number: number;
+  user_id: string;
+  user_email: string;
+  comment: string;
+  gif_url?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface MovieComment {
   id: string;
   movie_id: number;
@@ -504,6 +517,48 @@ export class SupabaseService {
     const { error } = await this.client
       .from('movie_comments')
       .update({ comment, gif_url: gifUrl ?? null, updated_at: new Date().toISOString() })
+      .eq('id', id);
+    if (error) throw error;
+  }
+
+  async getEpisodeComments(seriesId: number, seasonNumber: number, episodeNumber: number): Promise<EpisodeComment[]> {
+    if (!this.client) return [];
+    const { data, error } = await this.client
+      .from('episode_comments')
+      .select('*')
+      .eq('series_id', seriesId)
+      .eq('season_number', seasonNumber)
+      .eq('episode_number', episodeNumber)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data ?? [];
+  }
+
+  async addEpisodeComment(seriesId: number, seasonNumber: number, episodeNumber: number, comment: string, gifUrl?: string | null): Promise<EpisodeComment> {
+    if (!this.client || !this.userId) throw new Error('Usuário não autenticado.');
+    const { data, error } = await this.client
+      .from('episode_comments')
+      .insert({ series_id: seriesId, season_number: seasonNumber, episode_number: episodeNumber, user_id: this.userId, user_email: this.currentUser?.email ?? '', comment, gif_url: gifUrl ?? null })
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  }
+
+  async updateEpisodeComment(id: string, comment: string, gifUrl?: string | null): Promise<void> {
+    if (!this.client) return;
+    const { error } = await this.client
+      .from('episode_comments')
+      .update({ comment, gif_url: gifUrl ?? null, updated_at: new Date().toISOString() })
+      .eq('id', id);
+    if (error) throw error;
+  }
+
+  async deleteEpisodeComment(id: string): Promise<void> {
+    if (!this.client) return;
+    const { error } = await this.client
+      .from('episode_comments')
+      .delete()
       .eq('id', id);
     if (error) throw error;
   }

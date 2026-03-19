@@ -116,6 +116,96 @@
         {{ watched ? '✅ Marcado como visto' : '⬜ Marcar como visto' }}
       </button>
 
+      <!-- Comments -->
+      <div class="comments-section">
+        <h3 class="section-label">Comentários</h3>
+
+        <div class="comment-form">
+          <div class="textarea-wrapper">
+            <textarea #newCommentRef class="comment-input" [(ngModel)]="newComment"
+              placeholder="Escreva seu comentário..." rows="3"></textarea>
+            <div class="textarea-actions">
+              <button class="emoji-trigger" (click)="showEmojiPicker = !showEmojiPicker" type="button">😊</button>
+              <button class="gif-trigger" (click)="showGifPicker = !showGifPicker; gifQuery = ''; gifResults = []"
+                type="button">GIF</button>
+            </div>
+            <div class="emoji-panel" *ngIf="showEmojiPicker">
+              <button *ngFor="let e of emojis" class="emoji-btn" (click)="insertEmoji(e, 'new')">{{ e }}</button>
+            </div>
+            <div class="gif-panel" *ngIf="showGifPicker">
+              <input class="gif-search" type="text" [(ngModel)]="gifQuery" (ngModelChange)="onGifQueryChange($event)"
+                placeholder="Buscar GIF..." />
+              <div class="gif-grid" *ngIf="gifResults.length > 0">
+                <img *ngFor="let g of gifResults" [src]="g.thumb" (click)="selectGif(g, 'new')" class="gif-thumb" />
+              </div>
+              <p class="gif-hint" *ngIf="gifResults.length === 0 && gifQuery">Nenhum resultado.</p>
+              <p class="gif-hint" *ngIf="!gifQuery">Digite para buscar um GIF 🔍</p>
+            </div>
+          </div>
+          <div class="gif-preview" *ngIf="selectedGif">
+            <img [src]="selectedGif" class="gif-preview-img" />
+            <button class="gif-remove" (click)="removeGif('new')">✕</button>
+          </div>
+          <button class="comment-submit" (click)="submitComment(); showEmojiPicker = false; showGifPicker = false"
+            [disabled]="savingComment || (!newComment.trim() && !selectedGif)">
+            Publicar
+          </button>
+        </div>
+
+        <div class="comments-list" *ngIf="comments.length > 0">
+          <div class="comment-item" *ngFor="let c of comments">
+            <div class="comment-header">
+              <span class="comment-author">{{ getEmailUser(c.user_email) }}</span>
+              <span class="comment-date">{{ formatCommentDate(c.created_at) }}</span>
+              <div class="comment-actions" *ngIf="isOwnComment(c)">
+                <button class="action-btn" (click)="startEdit(c)" *ngIf="editingId !== c.id">✏️</button>
+                <button class="action-btn" (click)="deleteComment(c.id)">🗑️</button>
+              </div>
+            </div>
+            <ng-container *ngIf="editingId === c.id; else viewMode">
+              <div class="textarea-wrapper">
+                <textarea #editCommentRef class="comment-input" [(ngModel)]="editingText" rows="3"></textarea>
+                <div class="textarea-actions">
+                  <button class="emoji-trigger" (click)="showEditEmojiPicker = !showEditEmojiPicker"
+                    type="button">😊</button>
+                  <button class="gif-trigger"
+                    (click)="showEditGifPicker = !showEditGifPicker; gifQuery = ''; gifResults = []"
+                    type="button">GIF</button>
+                </div>
+                <div class="emoji-panel" *ngIf="showEditEmojiPicker">
+                  <button *ngFor="let e of emojis" class="emoji-btn" (click)="insertEmoji(e, 'edit')">{{ e }}</button>
+                </div>
+                <div class="gif-panel" *ngIf="showEditGifPicker">
+                  <input class="gif-search" type="text" [(ngModel)]="gifQuery"
+                    (ngModelChange)="onGifQueryChange($event)" placeholder="Buscar GIF..." />
+                  <div class="gif-grid" *ngIf="gifResults.length > 0">
+                    <img *ngFor="let g of gifResults" [src]="g.thumb" (click)="selectGif(g, 'edit')"
+                      class="gif-thumb" />
+                  </div>
+                  <p class="gif-hint" *ngIf="gifResults.length === 0 && gifQuery">Nenhum resultado.</p>
+                  <p class="gif-hint" *ngIf="!gifQuery">Digite para buscar um GIF 🔍</p>
+                </div>
+              </div>
+              <div class="gif-preview" *ngIf="editSelectedGif">
+                <img [src]="editSelectedGif" class="gif-preview-img" />
+                <button class="gif-remove" (click)="removeGif('edit')">✕</button>
+              </div>
+              <div class="edit-actions">
+                <button class="comment-submit" (click)="saveEdit(c)" [disabled]="savingComment">Salvar</button>
+                <button class="cancel-btn" (click)="cancelEdit()">Cancelar</button>
+              </div>
+            </ng-container>
+            <ng-template #viewMode>
+              <p class="comment-text" *ngIf="c.comment">{{ c.comment }}</p>
+              <img *ngIf="c.gif_url" [src]="c.gif_url" class="comment-gif" />
+              <span class="comment-edited" *ngIf="c.updated_at !== c.created_at">editado</span>
+            </ng-template>
+          </div>
+        </div>
+
+        <p class="no-comments" *ngIf="comments.length === 0">Nenhum comentário ainda. Seja o primeiro!</p>
+      </div>
+
     </div>
   </div>
 </div>
