@@ -115,6 +115,16 @@ export interface PersonTVCredit {
   episode_count: number;
 }
 
+export interface PersonTVCrewCredit {
+  id: number;
+  name: string;
+  poster_path: string | null;
+  first_air_date: string;
+  job: string;
+  department: string;
+  vote_average: number;
+}
+
 export interface MovieResponse {
   page: number;
   results: Movie[];
@@ -383,8 +393,8 @@ export class TmdbService {
     );
   }
 
-  getPersonTVCredits(id: number): Observable<{ cast: PersonTVCredit[] }> {
-    return this.http.get<{ cast: PersonTVCredit[] }>(
+  getPersonTVCredits(id: number): Observable<{ cast: PersonTVCredit[]; crew: PersonTVCrewCredit[] }> {
+    return this.http.get<{ cast: PersonTVCredit[]; crew: PersonTVCrewCredit[] }>(
       `${this.baseUrl}/person/${id}/tv_credits?${this.buildParams()}`
     );
   }

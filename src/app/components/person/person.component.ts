@@ -5,26 +5,24 @@ import { forkJoin } from 'rxjs';
 import { SupabaseService, WatchStatus, SeriesStatus } from '../../services/supabase.service';
 import { PersonDetails, TmdbService } from '../../services/tmdb.service';
 
-interface CombinedCredit {
+interface CreditEntry {
   id: number;
   title: string;
   poster_path: string | null;
   date: string;
-  character: string;
-  vote_average: number;
+  role: string;
   type: 'movie' | 'tv';
+  vote_average: number;
 }
 
-interface DirectedMovie {
-  id: number;
-  title: string;
-  poster_path: string | null;
-  date: string;
-  vote_average: number;
+interface CreditGroup {
+  key: string;
+  label: string;
+  credits: CreditEntry[];
 }
 
 interface PersonState {
-  typeFilter: 'all' | 'movie' | 'tv' | 'directed';
+  activeGroup: string;
   sortBy: 'name' | 'year';
   sortDir: 'asc' | 'desc';
   scrollY: number;
@@ -39,10 +37,9 @@ interface PersonState {
 })
 export class PersonComponent implements OnInit, OnDestroy {
   person: PersonDetails | null = null;
-  credits: CombinedCredit[] = [];
-  directedMovies: DirectedMovie[] = [];
+  groups: CreditGroup[] = [];
+  activeGroup = 'actor';
   loading = false;
-  typeFilter: 'all' | 'movie' | 'tv' | 'directed' = 'all';
   sortBy: 'name' | 'year' = 'year';
   sortDir: 'asc' | 'desc' = 'desc';
 
@@ -64,13 +61,12 @@ export class PersonComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.personId = Number(this.route.snapshot.paramMap.get('id'));
 
-    // Restaurar estado salvo
     const saved = sessionStorage.getItem(this.stateKey);
     if (saved) {
       const state: PersonState = JSON.parse(saved);
-      this.typeFilter = state.typeFilter;
-      this.sortBy     = state.sortBy;
-      this.sortDir    = state.sortDir;
+      this.activeGroup = state.activeGroup;
+      this.sortBy = state.sortBy;
+      this.sortDir = state.sortDir;
     }
 
     if (this.personId) this.load(this.personId);
@@ -85,21 +81,19 @@ export class PersonComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.savingState) {
-      const state: PersonState = {
-        typeFilter: this.typeFilter,
+      sessionStorage.setItem(this.stateKey, JSON.stringify({
+        activeGroup: this.activeGroup,
         sortBy: this.sortBy,
         sortDir: this.sortDir,
         scrollY: window.scrollY
-      };
-      sessionStorage.setItem(this.stateKey, JSON.stringify(state));
+      } as PersonState));
     }
   }
 
   load(id: number): void {
     this.loading = true;
     this.person = null;
-    this.credits = [];
-    this.directedMovies = [];
+    this.groups = [];
 
     forkJoin({
       person: this.tmdb.getPersonDetails(id),
@@ -109,35 +103,82 @@ export class PersonComponent implements OnInit, OnDestroy {
       next: ({ person, movieCredits, tvCredits }) => {
         this.person = person;
 
-        const movies: CombinedCredit[] = movieCredits.cast
-          .filter(m => m.release_date)
-          .map(m => ({
+        // Cast group
+        const actorCredits: CreditEntry[] = [];
+        const seenCast = new Set<string>();
+
+        for (const m of movieCredits.cast) {
+          if (!m.release_date) continue;
+          const k = `movie-${m.id}`;
+          if (seenCast.has(k)) continue;
+          seenCast.add(k);
+          actorCredits.push({
             id: m.id, title: m.title, poster_path: m.poster_path,
-            date: m.release_date, character: m.character,
-            vote_average: m.vote_average, type: 'movie' as const
-          }));
+            date: m.release_date, role: m.character,
+            type: 'movie', vote_average: m.vote_average
+          });
+        }
 
-        const series: CombinedCredit[] = tvCredits.cast
-          .filter(t => t.first_air_date)
-          .map(t => ({
+        for (const t of tvCredits.cast) {
+          if (!t.first_air_date) continue;
+          const k = `tv-${t.id}`;
+          if (seenCast.has(k)) continue;
+          seenCast.add(k);
+          actorCredits.push({
             id: t.id, title: t.name, poster_path: t.poster_path,
-            date: t.first_air_date, character: t.character,
-            vote_average: t.vote_average, type: 'tv' as const
-          }));
+            date: t.first_air_date, role: t.character,
+            type: 'tv', vote_average: t.vote_average
+          });
+        }
 
-        this.credits = [...movies, ...series.filter((t, i, arr) => arr.findIndex(x => x.id === t.id) === i)];
+        // Crew groups — keyed by job
+        const crewMap = new Map<string, CreditEntry[]>();
 
-        const seen = new Set<number>();
-        this.directedMovies = movieCredits.crew
-          .filter(c => c.job === 'Director' && c.release_date && !seen.has(c.id) && seen.add(c.id))
-          .map(c => ({
-            id: c.id, title: c.title, poster_path: c.poster_path,
-            date: c.release_date, vote_average: c.vote_average
+        const addCrew = (id: number, title: string, poster_path: string | null,
+          date: string, job: string, type: 'movie' | 'tv', vote_average: number) => {
+          if (!date || !job) return;
+          if (!crewMap.has(job)) crewMap.set(job, []);
+          crewMap.get(job)!.push({ id, title, poster_path, date, role: job, type, vote_average });
+        };
+
+        for (const c of movieCredits.crew) {
+          addCrew(c.id, c.title, c.poster_path, c.release_date, c.job, 'movie', c.vote_average);
+        }
+        for (const c of (tvCredits.crew || [])) {
+          addCrew(c.id, c.name, c.poster_path, c.first_air_date, c.job, 'tv', c.vote_average);
+        }
+
+        // Deduplicate within each crew group
+        for (const [job, entries] of crewMap) {
+          const seen = new Set<string>();
+          crewMap.set(job, entries.filter(e => {
+            const k = `${e.type}-${e.id}`;
+            if (seen.has(k)) return false;
+            seen.add(k);
+            return true;
           }));
+        }
+
+        // Build final groups array
+        this.groups = [];
+        if (actorCredits.length > 0) {
+          this.groups.push({ key: 'actor', label: 'Atuação', credits: actorCredits });
+        }
+
+        const crewGroups = Array.from(crewMap.entries())
+          .map(([key, credits]) => ({ key, label: key, credits }))
+          .sort((a, b) => b.credits.length - a.credits.length);
+
+        this.groups.push(...crewGroups);
+
+        // If saved group no longer exists, default to first
+        if (!this.groups.find(g => g.key === this.activeGroup)) {
+          this.activeGroup = this.groups[0]?.key ?? 'actor';
+        }
 
         this.loading = false;
 
-        // Restaurar scroll após renderização
+        // Restore scroll
         const saved = sessionStorage.getItem(this.stateKey);
         if (saved) {
           const { scrollY } = JSON.parse(saved) as PersonState;
@@ -161,38 +202,25 @@ export class PersonComponent implements OnInit, OnDestroy {
     }
   }
 
-  get filteredCredits(): CombinedCredit[] {
-    const base = (this.typeFilter === 'all' || this.typeFilter === 'directed')
-      ? this.credits
-      : this.credits.filter(c => c.type === this.typeFilter);
-
+  get activeCredits(): CreditEntry[] {
+    const group = this.groups.find(g => g.key === this.activeGroup);
+    const base = group?.credits ?? [];
     return [...base].sort((a, b) => {
-      const val = this.sortBy === 'name'
-        ? a.title.localeCompare(b.title)
-        : (a.date || '').localeCompare(b.date || '');
-      return this.sortDir === 'asc' ? val : -val;
+      if (this.sortBy === 'name') {
+        const cmp = a.title.localeCompare(b.title);
+        return this.sortDir === 'asc' ? cmp : -cmp;
+      }
+      const yearA = (a.date || '').substring(0, 4);
+      const yearB = (b.date || '').substring(0, 4);
+      const yearCmp = yearA.localeCompare(yearB);
+      if (yearCmp !== 0) return this.sortDir === 'asc' ? yearCmp : -yearCmp;
+      return a.title.localeCompare(b.title);
     });
   }
 
-  get sortedDirectedMovies(): DirectedMovie[] {
-    return [...this.directedMovies].sort((a, b) => {
-      const val = this.sortBy === 'name'
-        ? a.title.localeCompare(b.title)
-        : (a.date || '').localeCompare(b.date || '');
-      return this.sortDir === 'asc' ? val : -val;
-    });
-  }
-
-  get movieCount(): number { return this.credits.filter(c => c.type === 'movie').length; }
-  get tvCount(): number { return this.credits.filter(c => c.type === 'tv').length; }
-
-  getStatus(credit: CombinedCredit): string | null {
+  getStatus(credit: CreditEntry): string | null {
     if (credit.type === 'movie') return this.movieStatusMap.get(credit.id) ?? null;
     return this.seriesStatusMap.get(credit.id) ?? null;
-  }
-
-  getDirectedStatus(id: number): string | null {
-    return this.movieStatusMap.get(id) ?? null;
   }
 
   statusLabel(status: string | null): string {
@@ -221,12 +249,10 @@ export class PersonComponent implements OnInit, OnDestroy {
     this.location.back();
   }
 
-  navigate(credit: CombinedCredit): void {
-    // Save state now while scroll position is still correct,
-    // and prevent ngOnDestroy from overwriting with scrollY=0
+  navigate(credit: CreditEntry): void {
     this.savingState = false;
     sessionStorage.setItem(this.stateKey, JSON.stringify({
-      typeFilter: this.typeFilter,
+      activeGroup: this.activeGroup,
       sortBy: this.sortBy,
       sortDir: this.sortDir,
       scrollY: window.scrollY

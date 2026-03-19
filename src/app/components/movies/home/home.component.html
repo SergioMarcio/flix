@@ -16,7 +16,7 @@
 </section>
 
 <!-- Search Bar -->
-<div class="search-section">
+<div class="search-section" [class.no-hero]="isSearching || !heroMovie">
   <div class="search-wrapper">
     <span class="search-icon">🔍</span>
     <input type="text" class="search-input" placeholder="Pesquisar filmes..." [(ngModel)]="searchQuery"

@@ -46,6 +46,17 @@ export interface UserMovie {
   updated_at?: string;
 }
 
+export interface MovieComment {
+  id: string;
+  movie_id: number;
+  user_id: string;
+  user_email: string;
+  comment: string;
+  gif_url?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -464,5 +475,45 @@ export class SupabaseService {
       if (s.status === 'want_to_watch') stats.want_to_watch++;
     });
     return stats;
+  }
+
+  async getMovieComments(movieId: number): Promise<MovieComment[]> {
+    if (!this.client) return [];
+    const { data, error } = await this.client
+      .from('movie_comments')
+      .select('*')
+      .eq('movie_id', movieId)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data ?? [];
+  }
+
+  async addMovieComment(movieId: number, comment: string, gifUrl?: string | null): Promise<MovieComment> {
+    if (!this.client || !this.userId) throw new Error('Usuário não autenticado.');
+    const { data, error } = await this.client
+      .from('movie_comments')
+      .insert({ movie_id: movieId, user_id: this.userId, user_email: this.currentUser?.email ?? '', comment, gif_url: gifUrl ?? null })
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  }
+
+  async updateMovieComment(id: string, comment: string, gifUrl?: string | null): Promise<void> {
+    if (!this.client) return;
+    const { error } = await this.client
+      .from('movie_comments')
+      .update({ comment, gif_url: gifUrl ?? null, updated_at: new Date().toISOString() })
+      .eq('id', id);
+    if (error) throw error;
+  }
+
+  async deleteMovieComment(id: string): Promise<void> {
+    if (!this.client) return;
+    const { error } = await this.client
+      .from('movie_comments')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
   }
 }
