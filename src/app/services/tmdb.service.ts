@@ -95,6 +95,16 @@ export interface PersonMovieCredit {
   vote_average: number;
 }
 
+export interface PersonCrewCredit {
+  id: number;
+  title: string;
+  poster_path: string | null;
+  release_date: string;
+  job: string;
+  department: string;
+  vote_average: number;
+}
+
 export interface PersonTVCredit {
   id: number;
   name: string;
@@ -224,7 +234,7 @@ export class TmdbService {
   }
 
   getImageUrl(path: string, size: 'w185' | 'w342' | 'w500' | 'w780' | 'original' = 'w500'): string {
-    if (!path) return 'assets/no-poster.jpg';
+    if (!path) return 'assets/no-poster.svg';
     return `${this.imageBaseUrl}/${size}${path}`;
   }
 
@@ -367,8 +377,8 @@ export class TmdbService {
     );
   }
 
-  getPersonMovieCredits(id: number): Observable<{ cast: PersonMovieCredit[] }> {
-    return this.http.get<{ cast: PersonMovieCredit[] }>(
+  getPersonMovieCredits(id: number): Observable<{ cast: PersonMovieCredit[]; crew: PersonCrewCredit[] }> {
+    return this.http.get<{ cast: PersonMovieCredit[]; crew: PersonCrewCredit[] }>(
       `${this.baseUrl}/person/${id}/movie_credits?${this.buildParams()}`
     );
   }
@@ -376,6 +386,12 @@ export class TmdbService {
   getPersonTVCredits(id: number): Observable<{ cast: PersonTVCredit[] }> {
     return this.http.get<{ cast: PersonTVCredit[] }>(
       `${this.baseUrl}/person/${id}/tv_credits?${this.buildParams()}`
+    );
+  }
+
+  getDirectedMovies(personId: number, page = 1): Observable<MovieResponse> {
+    return this.http.get<MovieResponse>(
+      `${this.baseUrl}/discover/movie?${this.buildParams({ with_crew: personId.toString(), sort_by: 'release_date.desc', page: page.toString() })}`
     );
   }
 

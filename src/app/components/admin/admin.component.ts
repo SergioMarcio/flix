@@ -88,7 +88,7 @@ export class AdminComponent implements OnInit {
   }
 
   getPosterUrl(path: string): string {
-    if (!path) return 'assets/no-poster.jpg';
+    if (!path) return 'assets/no-poster.svg';
     return `https://image.tmdb.org/t/p/w92${path}`;
   }
 

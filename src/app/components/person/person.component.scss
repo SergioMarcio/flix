@@ -107,10 +107,12 @@
 .type-tabs {
   display: flex;
   gap: 0.4rem;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 
   button {
-    padding: 0.35rem 0.9rem;
+    flex: 1;
+    text-align: center;
+    padding: 0.35rem 0.5rem;
     border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.12);
     background: rgba(255, 255, 255, 0.04);
@@ -129,6 +131,18 @@
       border-color: #D4AF37;
       color: #D4AF37;
       background: rgba(212, 175, 55, 0.1);
+    }
+  }
+
+  @media (max-width: 600px) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem;
+
+    button {
+      border-radius: 8px;
+      text-align: center;
+      width: 100%;
     }
   }
 }
@@ -253,6 +267,20 @@
     .credit-year {
       font-size: 0.75rem;
       color: rgba(255, 255, 255, 0.4);
+    }
+
+    .user-status {
+      display: inline-block;
+      margin-top: 0.15rem;
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 0.1rem 0.5rem;
+      border-radius: 10px;
+      width: fit-content;
+
+      &.watched       { background: rgba(34, 197, 94, 0.15);  color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+      &.watching      { background: rgba(99, 102, 241, 0.15); color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.3); }
+      &.want_to_watch { background: rgba(212, 175, 55, 0.15); color: #D4AF37; border: 1px solid rgba(212, 175, 55, 0.3); }
     }
 
     .credit-character {

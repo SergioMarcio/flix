@@ -28,13 +28,16 @@
     <div class="controls">
       <div class="type-tabs">
         <button [class.active]="typeFilter === 'all'" (click)="typeFilter = 'all'">
-          Todos ({{ credits.length }})
+          Atuação (Todos) ({{ credits.length }})
         </button>
         <button [class.active]="typeFilter === 'movie'" (click)="typeFilter = 'movie'">
-          🎬 Filmes ({{ movieCount }})
+          🎬 Atuação (Filmes) ({{ movieCount }})
         </button>
         <button [class.active]="typeFilter === 'tv'" (click)="typeFilter = 'tv'">
-          📺 Séries ({{ tvCount }})
+          📺 Atuação (Séries) ({{ tvCount }})
+        </button>
+        <button *ngIf="directedMovies.length" [class.active]="typeFilter === 'directed'" (click)="typeFilter = 'directed'" class="directed-tab">
+          🎥 Direção ({{ directedMovies.length }})
         </button>
       </div>
 
@@ -48,8 +51,8 @@
       </div>
     </div>
 
-    <!-- Credits list -->
-    <div class="credits-list">
+    <!-- Credits list (atuação) -->
+    <div class="credits-list" *ngIf="typeFilter !== 'directed'">
       <div class="credit-card" *ngFor="let c of filteredCredits" (click)="navigate(c)">
         <img [src]="getPosterUrl(c.poster_path)" [alt]="c.title" class="credit-poster" />
         <div class="credit-info">
@@ -61,10 +64,27 @@
           </div>
           <span class="credit-year">{{ getYear(c.date) }}</span>
           <span class="credit-character" *ngIf="c.character">{{ c.character }}</span>
+          <span class="user-status" *ngIf="getStatus(c)" [class]="getStatus(c)!">{{ statusLabel(getStatus(c)) }}</span>
         </div>
       </div>
-
       <p class="empty" *ngIf="filteredCredits.length === 0">Nenhum resultado.</p>
+    </div>
+
+    <!-- Directed list -->
+    <div class="credits-list" *ngIf="typeFilter === 'directed'">
+      <div class="credit-card" *ngFor="let m of sortedDirectedMovies"
+        (click)="navigate({ id: m.id, type: 'movie', title: m.title, poster_path: m.poster_path, date: m.date, character: '', vote_average: m.vote_average })">
+        <img [src]="getPosterUrl(m.poster_path)" [alt]="m.title" class="credit-poster" />
+        <div class="credit-info">
+          <div class="credit-top">
+            <span class="credit-title">{{ m.title }}</span>
+            <span class="type-badge movie">Filme</span>
+          </div>
+          <span class="credit-year">{{ getYear(m.date) }}</span>
+          <span class="user-status" *ngIf="getDirectedStatus(m.id)" [class]="getDirectedStatus(m.id)!">{{ statusLabel(getDirectedStatus(m.id)) }}</span>
+        </div>
+      </div>
+      <p class="empty" *ngIf="sortedDirectedMovies.length === 0">Nenhum resultado.</p>
     </div>
 
   </ng-container>

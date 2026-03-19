@@ -81,15 +81,15 @@
         <div class="section crew-section" *ngIf="director || writers.length">
           <div class="crew-row" *ngIf="director">
             <span class="crew-role">Direção</span>
-            <div class="crew-person">
+            <div class="crew-person clickable" (click)="goToPerson(director.id)">
               <img [src]="getProfileUrl(director.profile_path)" [alt]="director.name" class="crew-photo" />
               <span class="crew-name">{{ director.name }}</span>
             </div>
           </div>
-          <div class="crew-row" *ngIf="writers.length">
+          <div class="crew-row" *ngIf="writers.length" style="margin-top: 10px;">
             <span class="crew-role">Roteiro</span>
             <div class="crew-persons">
-              <div class="crew-person" *ngFor="let w of writers">
+              <div class="crew-person clickable" *ngFor="let w of writers" (click)="goToPerson(w.id)">
                 <img [src]="getProfileUrl(w.profile_path)" [alt]="w.name" class="crew-photo" />
                 <span class="crew-name">{{ w.name }}</span>
               </div>
@@ -104,26 +104,10 @@
 
         <!-- Streaming / Aluguel / Compra -->
         <div class="streaming-section" *ngIf="streamingProviders.length || rentProviders.length || buyProviders.length">
-          <div class="providers-group" *ngIf="streamingProviders.length">
+          <div class="providers-group" *ngIf="streamingProviders.length" style="margin-top: 10px;">
             <span class="providers-label">Streaming</span>
             <div class="providers-list">
               <a *ngFor="let p of streamingProviders" rel="noopener" class="provider-item" [title]="p.provider_name">
-                <img [src]="getProviderLogoUrl(p.logo_path)" [alt]="p.provider_name" class="provider-logo" />
-              </a>
-            </div>
-          </div>
-          <div class="providers-group" *ngIf="rentProviders.length">
-            <span class="providers-label">Aluguel</span>
-            <div class="providers-list">
-              <a *ngFor="let p of rentProviders" rel="noopener" class="provider-item" [title]="p.provider_name">
-                <img [src]="getProviderLogoUrl(p.logo_path)" [alt]="p.provider_name" class="provider-logo" />
-              </a>
-            </div>
-          </div>
-          <div class="providers-group" *ngIf="buyProviders.length">
-            <span class="providers-label">Compra</span>
-            <div class="providers-list">
-              <a *ngFor="let p of buyProviders" rel="noopener" class="provider-item" [title]="p.provider_name">
                 <img [src]="getProviderLogoUrl(p.logo_path)" [alt]="p.provider_name" class="provider-logo" />
               </a>
             </div>
@@ -153,15 +137,6 @@
         {{ showAllCast ? '▲ Ver menos' : '▼ Ver elenco completo (' + cast.length + ')' }}
       </button>
     </div>
-
-    <!-- Fotos -->
-    <!-- <div class="photos-section" *ngIf="photos.length">
-      <h2 class="section-title">Fotos</h2>
-      <div class="photos-grid">
-        <img *ngFor="let photo of photos" [src]="getPhotoUrl(photo.file_path)" alt="Foto do filme" class="photo-item"
-          loading="lazy" />
-      </div>
-    </div> -->
 
     <!-- Similar Movies -->
     <div class="similar-section" *ngIf="similarMovies.length">

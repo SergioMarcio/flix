@@ -157,7 +157,7 @@ export class MovieDetailComponent implements OnInit {
   }
 
   getProfileUrl(path: string | null): string {
-    if (!path) return 'assets/no-poster.jpg';
+    if (!path) return 'assets/no-poster.svg';
     return this.tmdbService.getImageUrl(path, 'w185');
   }
 
