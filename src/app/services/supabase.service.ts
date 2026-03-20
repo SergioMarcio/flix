@@ -125,7 +125,7 @@ export class SupabaseService {
     const { data, error } = await this.client.auth.signUp({
       email,
       password,
-      options: { emailRedirectTo: 'https://zingy-praline-4bf85e.netlify.app/' }
+      options: { emailRedirectTo: 'https://flixlog.netlify.app/' }
     });
     if (error) throw error;
 
