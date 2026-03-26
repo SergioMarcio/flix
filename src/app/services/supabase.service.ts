@@ -80,34 +80,32 @@ export class SupabaseService {
   readonly currentUser$ = this._currentUser.asObservable();
 
   constructor() {
-    this.client?.auth.getSession().then(({ data }) => {
-      this._currentUser.next(data.session?.user ?? null);
-    });
-
-    this.client?.auth.onAuthStateChange((_event, session) => {
-      this._currentUser.next(session?.user ?? null);
-    });
-  }
-
-  private get client(): SupabaseClient | null {
-    if (this._client) return this._client;
-
     const url = environment.supabaseUrl;
     const key = environment.supabaseAnonKey;
 
-    if (!url || url === 'YOUR_SUPABASE_URL' || !key || key === 'YOUR_SUPABASE_ANON_KEY') {
-      return null;
-    }
-
-    try {
+    if (url && url !== 'YOUR_SUPABASE_URL' && key && key !== 'YOUR_SUPABASE_ANON_KEY') {
       this._client = createClient(url, key, {
         auth: {
-          lock: <R>(_name: string, _acquireTimeout: number, fn: () => Promise<R>) => fn()
+          lock: <R>(_name: string, _acquireTimeout: number, fn: () => Promise<R>): Promise<R> => fn(),
+          autoRefreshToken: true,
+          persistSession: true,
+          detectSessionInUrl: true,
+          storage: window.localStorage,
+          storageKey: 'sb-auth-token'
         }
       });
-    } catch {
-      return null;
+
+      this._client.auth.getSession().then(({ data }) => {
+        this._currentUser.next(data.session?.user ?? null);
+      });
+
+      this._client.auth.onAuthStateChange((_event, session) => {
+        this._currentUser.next(session?.user ?? null);
+      });
     }
+  }
+
+  private get client(): SupabaseClient | null {
     return this._client;
   }
 
@@ -170,24 +168,14 @@ export class SupabaseService {
 
   async getUserMovies(): Promise<UserMovie[]> {
     if (!this.client || !this.userId) return [];
-    const PAGE = 1000;
-    let all: UserMovie[] = [];
-    let page = 0;
-    while (true) {
-      const from = page * PAGE;
-      const { data, error } = await this.client
-        .from('user_movies')
-        .select('*')
-        .eq('user_id', this.userId)
-        .order('updated_at', { ascending: false })
-        .range(from, from + PAGE - 1);
-      if (error) throw error;
-      if (!data || data.length === 0) break;
-      all = all.concat(data);
-      if (data.length < PAGE) break;
-      page++;
-    }
-    return all;
+    const { data, error } = await this.client
+      .from('user_movies')
+      .select('*')
+      .eq('user_id', this.userId)
+      .order('updated_at', { ascending: false });
+
+    if (error) throw error;
+    return data || [];
   }
 
   async getMovieStatus(movieId: number): Promise<WatchStatus | null> {
@@ -269,25 +257,15 @@ export class SupabaseService {
     const empty = { watched: 0, not_watched: 0, want_to_watch: 0, total_minutes: 0, liked_minutes: 0, neutral_minutes: 0, disliked_minutes: 0, unevaluated_minutes: 0, liked_count: 0, neutral_count: 0, disliked_count: 0, unevaluated_count: 0 };
     if (!this.client || !this.userId) return empty;
 
-    const PAGE = 1000;
-    let allData: { status: WatchStatus; runtime: number | null; liked: 'liked' | 'neutral' | 'disliked' | null }[] = [];
-    let page = 0;
-    while (true) {
-      const from = page * PAGE;
-      const { data, error } = await this.client
-        .from('user_movies')
-        .select('status, runtime, liked')
-        .eq('user_id', this.userId)
-        .range(from, from + PAGE - 1);
-      if (error) throw error;
-      if (!data || data.length === 0) break;
-      allData = allData.concat(data);
-      if (data.length < PAGE) break;
-      page++;
-    }
+    const { data, error } = await this.client
+      .from('user_movies')
+      .select('status, runtime, liked')
+      .eq('user_id', this.userId);
+
+    if (error) throw error;
 
     const stats = { ...empty };
-    allData.forEach((item: { status: WatchStatus; runtime: number | null; liked: 'liked' | 'neutral' | 'disliked' | null }) => {
+    (data || []).forEach((item: { status: WatchStatus; runtime: number | null; liked: 'liked' | 'neutral' | 'disliked' | null }) => {
       stats[item.status]++;
       if (item.status === 'watched' && item.runtime) {
         stats.total_minutes += item.runtime;
@@ -421,24 +399,13 @@ export class SupabaseService {
 
   async getUserMoviesAdmin(userId: string): Promise<UserMovie[]> {
     if (!this.client) return [];
-    const PAGE = 1000;
-    let all: UserMovie[] = [];
-    let page = 0;
-    while (true) {
-      const from = page * PAGE;
-      const { data, error } = await this.client
-        .from('user_movies')
-        .select('*')
-        .eq('user_id', userId)
-        .order('updated_at', { ascending: false })
-        .range(from, from + PAGE - 1);
-      if (error) throw error;
-      if (!data || data.length === 0) break;
-      all = all.concat(data);
-      if (data.length < PAGE) break;
-      page++;
-    }
-    return all;
+    const { data, error } = await this.client
+      .from('user_movies')
+      .select('*')
+      .eq('user_id', userId)
+      .order('updated_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
   }
 
   async getMovieStatsAdmin(userId: string): Promise<{
