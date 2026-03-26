@@ -79,7 +79,7 @@
       color: rgba(255, 255, 255, 0.75);
       text-decoration: none;
       font-size: 0.82rem;
-      letter-spacing: 0.5px;
+      // letter-spacing: 0.5px;
       text-transform: uppercase;
       transition: color 0.2s ease;
       white-space: nowrap;
@@ -160,13 +160,30 @@
   margin-left: 0.4rem;
   border-left: 1px solid rgba(212, 175, 55, 0.25);
 
-  .user-email {
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.4);
+  .user-email-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     max-width: 140px;
+  }
+
+  .user-email-user {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    max-width: 140px;
+  }
+
+  .user-email-domain {
+    font-size: 0.68rem;
+    color: rgba(255, 255, 255, 0.35);
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
   }
 
   .btn-logout {

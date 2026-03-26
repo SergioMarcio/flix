@@ -57,7 +57,12 @@
 
     @if (userEmail) {
     <div class="user-section">
-      <span class="user-email">{{ userEmail }}</span>
+      <div class="user-email-block">
+        <span class="user-email-user">{{ emailUser }}</span>
+        @if (emailDomain) {
+        <span class="user-email-domain">{{ emailDomain }}</span>
+        }
+      </div>
       <button class="btn-logout" (click)="logout()">Sair</button>
     </div>
     }
