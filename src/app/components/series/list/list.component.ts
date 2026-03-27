@@ -76,6 +76,7 @@ export class SeriesListComponent implements OnInit, OnDestroy {
       if (saved) {
         const state: ListState = JSON.parse(saved);
         if (state.type === type) {
+          sessionStorage.removeItem(STATE_KEY);
           this.shows = state.shows;
           this.currentPage = state.currentPage;
           this.totalPages = state.totalPages;

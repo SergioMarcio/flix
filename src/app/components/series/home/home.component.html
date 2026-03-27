@@ -10,52 +10,67 @@
         <button class="btn-primary" (click)="goToShow(heroShow)">Ver Detalhes</button>
       </div>
     </div>
-    <!-- <div class="hero-dots">
-      <span *ngFor="let s of trendingShows; let i = index" class="dot" [class.active]="i === heroIndex"
-        (click)="setHero(i)">
-      </span>
-    </div> -->
   </div>
 
   <!-- Search Bar -->
-  <div class="search-section">
-    <div class="search-bar">
+  <div class="search-section" [class.searching]="isSearching">
+    <div class="search-wrapper">
       <span class="search-icon">🔍</span>
-      <input type="text" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange()" placeholder="Buscar séries..."
-        class="search-input" />
-      <button *ngIf="searchQuery" class="clear-btn" (click)="clearSearch()">✕</button>
+      <input type="text" class="search-input" placeholder="Pesquisar séries..." [(ngModel)]="searchQuery"
+        (ngModelChange)="onSearchChange()" />
+      <button class="clear-btn" *ngIf="searchQuery" (click)="clearSearch()">✕</button>
     </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-container" *ngIf="loading && !isSearching">
+    <div class="film-reel">📺</div>
+    <p>Carregando...</p>
   </div>
 
   <!-- Search Results -->
-  <div class="content-section" *ngIf="isSearching">
-    <h2 class="section-title">Resultados para "{{ searchQuery }}"</h2>
-    <div class="shows-grid" *ngIf="shows.length > 0">
-      <div class="show-card" *ngFor="let show of shows" (click)="goToShow(show)" [class.has-status]="getStatus(show)">
-        <div class="card-poster">
-          <img [src]="getImageUrl(show.poster_path)" [alt]="show.name" />
-          <div class="rating-badge">
-            <span class="star">★</span> {{ show.vote_average.toFixed(1) }}
+  <section class="series-section" *ngIf="isSearching">
+    <div class="loading-container" *ngIf="loading && shows.length === 0">
+      <div class="film-reel">📺</div>
+      <p>Carregando...</p>
+    </div>
+    <ng-container *ngIf="!loading || shows.length > 0">
+      <div class="section-header">
+        <h2>Resultados para: <span class="highlight">"{{ searchQuery }}"</span></h2>
+        <span class="result-count" *ngIf="shows.length > 0">{{ shows.length }} séries encontradas</span>
+      </div>
+      <div class="shows-grid" *ngIf="shows.length > 0; else noResults">
+        <div class="show-card" *ngFor="let show of shows" (click)="goToShow(show)" [class.has-status]="getStatus(show)">
+          <div class="card-poster">
+            <img [src]="getImageUrl(show.poster_path)" [alt]="show.name" />
+            <div class="rating-badge">
+              <span class="star">★</span> {{ show.vote_average.toFixed(1) }}
+            </div>
+            <div class="status-badge" *ngIf="getStatus(show)" [class]="getStatus(show)!">{{ statusLabel(getStatus(show)!) }}</div>
           </div>
-          <div class="status-badge" *ngIf="getStatus(show)" [class]="getStatus(show)!">{{ statusLabel(getStatus(show)!) }}</div>
-        </div>
-        <div class="card-info">
-          <p class="card-title">{{ show.name }}</p>
-          <p class="card-year">{{ getYear(show.first_air_date) }}</p>
+          <div class="card-info">
+            <p class="card-title">{{ show.name }}</p>
+            <p class="card-year">{{ getYear(show.first_air_date) }}</p>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="empty-state" *ngIf="!loading && shows.length === 0">
-      <span>🔍</span>
-      <p>Nenhuma série encontrada.</p>
-    </div>
-  </div>
+      <ng-template #noResults>
+        <div class="no-results">
+          <span>🎭</span>
+          <p>Nenhuma série encontrada para "{{ searchQuery }}"</p>
+        </div>
+      </ng-template>
+    </ng-container>
+  </section>
 
   <!-- Trending -->
-  <div class="content-section" *ngIf="!isSearching && trendingShows.length > 0">
-    <h2 class="section-title">📺 Séries em Alta</h2>
+  <section class="series-section" *ngIf="!isSearching && !loading">
+    <div class="section-header">
+      <h2><span class="section-icon">📺</span>Séries em Alta</h2>
+    </div>
     <div class="shows-grid">
-      <div class="show-card" *ngFor="let show of trendingShows" (click)="goToShow(show)" [class.has-status]="getStatus(show)">
+      <div class="show-card" *ngFor="let show of trendingShows" (click)="goToShow(show)"
+        [class.has-status]="getStatus(show)">
         <div class="card-poster">
           <img [src]="getImageUrl(show.poster_path)" [alt]="show.name" />
           <div class="rating-badge">
@@ -69,10 +84,6 @@
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <div class="loading-screen" *ngIf="loading && !isSearching">
-    <div class="spinner-icon">📺</div>
-    <p>Carregando séries...</p>
-  </div>
 </div>

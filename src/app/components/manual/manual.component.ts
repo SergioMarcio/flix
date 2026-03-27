@@ -37,7 +37,8 @@ export class ManualComponent {
           tips: [
             'Use a barra de pesquisa para buscar qualquer filme por título — a pesquisa é feita automaticamente enquanto você digita.',
             'Nos resultados da pesquisa, clique em "Carregar Mais" para ver mais filmes sem sair da página.',
-            'Clique em qualquer filme para ver todos os seus detalhes.'
+            'Clique em qualquer filme para ver todos os seus detalhes.',
+            'Ao clicar em um filme e depois pressionar "← Voltar" no detalhe, você retorna exatamente ao mesmo ponto — com o scroll, a pesquisa e os resultados preservados.'
           ]
         },
         {
@@ -45,7 +46,7 @@ export class ManualComponent {
           desc: 'Listas curadas de filmes separadas por categoria. Cada lista exibe os filmes em grade com poster, nota e status da sua coleção.',
           tips: [
             'Clique em "Carregar Mais" para adicionar mais filmes à lista sem recarregar a página.',
-            'Se você clicar em um filme e depois voltar, a lista estará exatamente onde você parou — com os mesmos filmes carregados e na mesma posição de scroll.'
+            'Ao clicar em um filme e depois pressionar "← Voltar" no detalhe, a lista estará exatamente onde você parou — com os mesmos filmes carregados e na mesma posição de scroll.'
           ]
         },
         {
@@ -155,6 +156,24 @@ export class ManualComponent {
             'Filtre por status para focar em séries que está assistindo, já concluiu ou quer assistir.',
             'Ao clicar em uma série nas estatísticas e depois voltar, o filtro e a ordenação são preservados.',
             'Ordene por título ou ano dentro de cada filtro.'
+          ]
+        }
+      ]
+    },
+    {
+      id: 'buscar',
+      icon: '🔍',
+      title: 'Busca Unificada',
+      items: [
+        {
+          title: 'Buscar Filmes e Séries',
+          desc: 'Pesquise filmes e séries ao mesmo tempo em uma única tela, acessível pelo link "🔍 Buscar" na navbar.',
+          tips: [
+            'Digite o nome do título — os resultados aparecem automaticamente enquanto você digita.',
+            'Use os filtros "Todos", "🎬 Filmes" ou "📺 Séries" para refinar os resultados sem fazer uma nova busca.',
+            'Cada card exibe um badge indicando se é filme (🎬) ou série (📺).',
+            'Clique em "Carregar Mais" para ver mais resultados.',
+            'Ao clicar em um título e depois pressionar "← Voltar" no detalhe, a busca, o filtro e o scroll são preservados exatamente como estavam.'
           ]
         }
       ]

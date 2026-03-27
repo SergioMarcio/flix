@@ -1,0 +1,309 @@
+.search-page {
+  min-height: 100vh;
+  background: #0a0a0a;
+  padding-bottom: 4rem;
+}
+
+// Hero com campo de busca
+.search-hero {
+  padding: 84px 2rem 1.5rem;
+  display: flex;
+  justify-content: center;
+
+  .search-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 700px;
+
+    .search-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.1rem;
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.9rem 3rem 0.9rem 3rem;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 50px;
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+      height: 57px;
+
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.35);
+      }
+
+      &:focus {
+        border-color: rgba(212, 175, 55, 0.5);
+        background: rgba(255, 255, 255, 0.08);
+      }
+    }
+
+    .clear-btn {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 0.9rem;
+      cursor: pointer;
+      padding: 0.25rem;
+      transition: color 0.2s;
+
+      &:hover {
+        color: #fff;
+      }
+    }
+  }
+}
+
+// Filtros
+.filters {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0 2rem 1.5rem;
+  flex-wrap: wrap;
+
+  .filter-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.55);
+    border-radius: 20px;
+    padding: 0.4rem 1rem;
+    font-size: 0.82rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    .filter-count {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 0.1rem 0.45rem;
+      font-size: 0.72rem;
+    }
+
+    &:hover {
+      border-color: rgba(212, 175, 55, 0.3);
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    &.active {
+      background: rgba(212, 175, 55, 0.12);
+      border-color: rgba(212, 175, 55, 0.5);
+      color: #D4AF37;
+
+      .filter-count {
+        background: rgba(212, 175, 55, 0.2);
+      }
+    }
+  }
+}
+
+// Loading
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem;
+  color: rgba(255, 255, 255, 0.5);
+
+  .spinner {
+    font-size: 3rem;
+    animation: spin 1.5s linear infinite;
+    margin-bottom: 1rem;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Estado vazio
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5rem 2rem;
+  color: rgba(255, 255, 255, 0.35);
+  text-align: center;
+
+  .empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
+
+  p {
+    font-size: 0.95rem;
+    line-height: 1.5;
+
+    strong {
+      color: rgba(255, 255, 255, 0.6);
+    }
+  }
+}
+
+// Grade
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1.2rem;
+  padding: 0 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.result-card {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.04);
+    z-index: 10;
+  }
+
+  .card-poster {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    aspect-ratio: 2/3;
+    background: #1a1a1a;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .media-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 1rem;
+      background: rgba(0, 0, 0, 0.75);
+      border-radius: 4px;
+      padding: 2px 6px;
+      backdrop-filter: blur(4px);
+    }
+
+    .rating-badge {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #D4AF37;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 7px;
+      border-radius: 4px;
+      backdrop-filter: blur(4px);
+
+      .star {
+        color: #D4AF37;
+      }
+    }
+  }
+
+  .card-info {
+    padding: 0.5rem 0.2rem 0;
+
+    .card-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-year {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.4);
+      margin-top: 0.2rem;
+      display: block;
+    }
+  }
+}
+
+// Carregar mais
+.load-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+
+  .load-more-btn {
+    background: linear-gradient(135deg, #D4AF37, #f0cb5a);
+    color: #000;
+    border: none;
+    padding: 0.8rem 3rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border-radius: 4px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
+    }
+  }
+}
+
+.loading-more {
+  text-align: center;
+  padding: 2rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.9rem;
+}
+
+// Mobile
+@media (max-width: 768px) {
+  .results-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .search-hero {
+    padding: 84px 1rem 1rem;
+  }
+
+  .filters {
+    padding: 0 1rem 1rem;
+  }
+
+  .results-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.8rem;
+    padding: 0 1rem;
+  }
+
+  .load-more .load-more-btn {
+    width: 100%;
+  }
+}

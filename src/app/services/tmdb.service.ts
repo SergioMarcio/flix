@@ -233,6 +233,25 @@ export interface TVResponse {
   total_results: number;
 }
 
+export interface MultiSearchResult {
+  id: number;
+  media_type: 'movie' | 'tv' | 'person';
+  title?: string;
+  name?: string;
+  poster_path: string | null;
+  release_date?: string;
+  first_air_date?: string;
+  vote_average?: number;
+  overview?: string;
+}
+
+export interface MultiSearchResponse {
+  page: number;
+  results: MultiSearchResult[];
+  total_pages: number;
+  total_results: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -405,6 +424,12 @@ export class TmdbService {
   getPersonTVCredits(id: number): Observable<{ cast: PersonTVCredit[]; crew: PersonTVCrewCredit[] }> {
     return this.http.get<{ cast: PersonTVCredit[]; crew: PersonTVCrewCredit[] }>(
       `${this.baseUrl}/person/${id}/tv_credits?${this.buildParams()}`
+    );
+  }
+
+  searchMulti(query: string, page = 1): Observable<MultiSearchResponse> {
+    return this.http.get<MultiSearchResponse>(
+      `${this.baseUrl}/search/multi?${this.buildParams({ query, page: page.toString() })}`
     );
   }
 

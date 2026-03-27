@@ -53,6 +53,7 @@ export class SeriesHomeComponent implements OnInit, OnDestroy {
 
     const saved = sessionStorage.getItem(STATE_KEY);
     if (saved) {
+      sessionStorage.removeItem(STATE_KEY);
       const state: HomeState = JSON.parse(saved);
       this.searchQuery = state.searchQuery;
       this.shows = state.shows;

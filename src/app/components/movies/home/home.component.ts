@@ -6,6 +6,19 @@ import { Subject, debounceTime, distinctUntilChanged, of, switchMap, takeUntil }
 import { Movie, MovieResponse, TmdbService } from '../../../services/tmdb.service';
 import { MovieCardComponent } from '../card/card.component';
 
+interface HomeState {
+  searchQuery: string;
+  movies: Movie[];
+  trendingMovies: Movie[];
+  heroIndex: number;
+  isSearching: boolean;
+  currentPage: number;
+  totalPages: number;
+  scrollY: number;
+}
+
+const STATE_KEY = 'movie_home_state';
+
 @Component({
   selector: 'app-movie-home',
   standalone: true,
@@ -36,8 +49,29 @@ export class MovieHomeComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.loadTrending();
+    const saved = sessionStorage.getItem(STATE_KEY);
+    if (saved) {
+      sessionStorage.removeItem(STATE_KEY);
+      const state: HomeState = JSON.parse(saved);
+      this.searchQuery = state.searchQuery;
+      this.movies = state.movies;
+      this.trendingMovies = state.trendingMovies;
+      this.heroIndex = state.heroIndex;
+      this.isSearching = state.isSearching;
+      this.currentPage = state.currentPage;
+      this.totalPages = state.totalPages;
+      this.heroMovie = this.trendingMovies[this.heroIndex] || null;
+      if (!this.isSearching) this.startHeroRotation();
+      setTimeout(() => window.scrollTo({ top: state.scrollY, behavior: 'instant' }), 0);
+      this.setupSearchSubject();
+      return;
+    }
 
+    this.loadTrending();
+    this.setupSearchSubject();
+  }
+
+  private setupSearchSubject(): void {
     this.searchSubject.pipe(
       debounceTime(400),
       distinctUntilChanged(),
@@ -64,6 +98,20 @@ export class MovieHomeComponent implements OnInit, OnDestroy {
       },
       error: () => { this.loading = false; }
     });
+  }
+
+  private saveState(): void {
+    const state: HomeState = {
+      searchQuery: this.searchQuery,
+      movies: this.movies,
+      trendingMovies: this.trendingMovies,
+      heroIndex: this.heroIndex,
+      isSearching: this.isSearching,
+      currentPage: this.currentPage,
+      totalPages: this.totalPages,
+      scrollY: window.scrollY
+    };
+    sessionStorage.setItem(STATE_KEY, JSON.stringify(state));
   }
 
   ngOnDestroy(): void {
@@ -136,6 +184,7 @@ export class MovieHomeComponent implements OnInit, OnDestroy {
   }
 
   goToMovie(movie: Movie): void {
+    this.saveState();
     this.router.navigate(['/movie', movie.id]);
   }
 

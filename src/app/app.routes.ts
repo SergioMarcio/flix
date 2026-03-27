@@ -15,6 +15,7 @@ import { MySeriesListComponent } from './components/series/my-series-list/my-ser
 import { SeasonDetailComponent } from './components/series/season-detail/season-detail.component';
 import { SeriesStatsComponent } from './components/series/stats/stats.component';
 import { ManualComponent } from './components/manual/manual.component';
+import { SearchComponent } from './components/search/search.component';
 import { SobreComponent } from './components/sobre/sobre.component';
 import { adminGuard } from './guards/admin.guard';
 import { authGuard } from './guards/auth.guard';
@@ -45,5 +46,6 @@ export const routes: Routes = [
   { path: 'admin', component: AdminComponent, canActivate: [adminGuard] },
   { path: 'sobre', component: SobreComponent },
   { path: 'manual', component: ManualComponent },
+  { path: 'buscar', component: SearchComponent, canActivate: [authGuard] },
   { path: '**', redirectTo: 'movies' }
 ];

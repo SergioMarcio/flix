@@ -10,6 +10,15 @@
   <div class="navbar-links desktop-nav">
 
     <div class="nav-group">
+      <span class="nav-group-label">Filmes e Séries</span>
+      <div class="nav-group-links">
+        <a routerLink="/buscar" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Explorar</a>
+      </div>
+    </div>
+
+    <div class="nav-divider"></div>
+
+    <div class="nav-group">
       <span class="nav-group-label">Filmes</span>
       <div class="nav-group-links">
         <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Explorar</a>
@@ -93,6 +102,16 @@
       </div>
       <button class="drawer-close" (click)="menuOpen = false">✕</button>
     </div>
+
+    <div class="drawer-divider"></div>
+
+    <!-- Filmes -->
+    <span class="drawer-section-label">🎬 Filmes e Séries</span>
+    <a routerLink="/buscar" routerLinkActive="active" class="drawer-item" (click)="menuOpen = false">
+      <span class="di-icon">🔍</span><span class="di-text">Buscar Filmes e Séries</span>
+    </a>
+
+    <div class="drawer-divider"></div>
 
     <!-- Filmes -->
     <span class="drawer-section-label">🎬 Filmes</span>

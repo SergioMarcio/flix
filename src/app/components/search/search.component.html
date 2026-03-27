@@ -1,0 +1,81 @@
+<div class="search-page">
+
+  <div class="search-hero">
+    <div class="search-wrapper">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Buscar filmes e séries..."
+        [(ngModel)]="query"
+        (ngModelChange)="onQueryChange()"
+        autofocus
+      />
+      <button class="clear-btn" *ngIf="query" (click)="clearSearch()">✕</button>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filters" *ngIf="results.length > 0">
+    <button class="filter-btn" [class.active]="filter === 'all'" (click)="setFilter('all')">
+      Todos <span class="filter-count">{{ countByFilter('all') }}</span>
+    </button>
+    <button class="filter-btn" [class.active]="filter === 'movie'" (click)="setFilter('movie')">
+      🎬 Filmes <span class="filter-count">{{ countByFilter('movie') }}</span>
+    </button>
+    <button class="filter-btn" [class.active]="filter === 'tv'" (click)="setFilter('tv')">
+      📺 Séries <span class="filter-count">{{ countByFilter('tv') }}</span>
+    </button>
+  </div>
+
+  <!-- Loading inicial -->
+  <div class="loading-container" *ngIf="loading && results.length === 0">
+    <div class="spinner">🔍</div>
+    <p>Buscando...</p>
+  </div>
+
+  <!-- Estado vazio (sem pesquisa) -->
+  <div class="empty-state" *ngIf="!query && results.length === 0">
+    <div class="empty-icon">🎬</div>
+    <p>Digite o nome de um filme ou série para começar</p>
+  </div>
+
+  <!-- Sem resultados -->
+  <div class="empty-state" *ngIf="query && !loading && filtered.length === 0 && results.length > 0">
+    <div class="empty-icon">😕</div>
+    <p>Nenhum resultado nessa categoria</p>
+  </div>
+
+  <div class="empty-state" *ngIf="query && !loading && results.length === 0">
+    <div class="empty-icon">😕</div>
+    <p>Nenhum resultado para <strong>"{{ query }}"</strong></p>
+  </div>
+
+  <!-- Grade de resultados -->
+  <div class="results-grid" *ngIf="filtered.length > 0">
+    <div class="result-card" *ngFor="let item of filtered" (click)="goTo(item)">
+      <div class="card-poster">
+        <img [src]="getPosterUrl(item.poster_path)" [alt]="getTitle(item)" loading="lazy" />
+        <span class="media-badge" [class.movie]="item.media_type === 'movie'" [class.tv]="item.media_type === 'tv'">
+          {{ item.media_type === 'movie' ? '🎬' : '📺' }}
+        </span>
+        <div class="rating-badge" *ngIf="item.vote_average && item.vote_average > 0">
+          <span class="star">★</span> {{ item.vote_average.toFixed(1) }}
+        </div>
+      </div>
+      <div class="card-info">
+        <h3 class="card-title">{{ getTitle(item) }}</h3>
+        <span class="card-year">{{ getYear(item) }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Carregar mais -->
+  <div class="load-more" *ngIf="currentPage < totalPages && !loading && !loadingMore && query">
+    <button class="load-more-btn" (click)="loadMore()">Carregar Mais</button>
+  </div>
+  <div class="loading-more" *ngIf="loadingMore">
+    <span>🔍 Carregando mais...</span>
+  </div>
+
+</div>
