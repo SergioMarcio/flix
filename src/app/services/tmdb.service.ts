@@ -6,6 +6,7 @@ import { environment } from '../../environments/environment';
 export interface Movie {
   id: number;
   title: string;
+  original_title: string;
   overview: string;
   poster_path: string;
   backdrop_path: string;
@@ -152,6 +153,7 @@ export interface MovieVideo {
 export interface TVShow {
   id: number;
   name: string;
+  original_name: string;
   overview: string;
   poster_path: string;
   backdrop_path: string;

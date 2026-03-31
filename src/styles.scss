@@ -17,6 +17,11 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+
+  &.menu-open {
+    overflow: hidden;
+    touch-action: none;
+  }
 }
 
 /* Custom scrollbar */

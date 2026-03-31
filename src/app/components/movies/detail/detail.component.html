@@ -65,6 +65,7 @@
         </div>
 
         <h1 class="movie-title">{{ movie.title }}</h1>
+        <p class="original-title" *ngIf="movie.original_title && movie.original_title !== movie.title">{{ movie.original_title }}</p>
 
         <p class="tagline" *ngIf="movie.tagline">"{{ movie.tagline }}"</p>
 

@@ -43,6 +43,7 @@
         </div>
 
         <h1 class="show-title">{{ show.name }}</h1>
+        <p class="original-title" *ngIf="show.original_name && show.original_name !== show.name">{{ show.original_name }}</p>
         <p class="tagline" *ngIf="show.tagline">"{{ show.tagline }}"</p>
 
         <div class="genres">

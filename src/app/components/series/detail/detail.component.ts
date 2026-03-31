@@ -1,6 +1,5 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, firstValueFrom, forkJoin, of } from 'rxjs';
 import { SafeUrlPipe } from '../../../pipes/safe-url.pipe';

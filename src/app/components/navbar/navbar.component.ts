@@ -26,6 +26,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.sub?.unsubscribe();
+    document.body.classList.remove('menu-open');
   }
 
   get isAdmin(): boolean {
@@ -43,17 +44,23 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   toggleMenu(): void {
     this.menuOpen = !this.menuOpen;
+    document.body.classList.toggle('menu-open', this.menuOpen);
+  }
+
+  closeMenu(): void {
+    this.menuOpen = false;
+    document.body.classList.remove('menu-open');
   }
 
   goToPeople(): void {
     sessionStorage.removeItem('people_search_state');
-    this.menuOpen = false;
+    this.closeMenu();
     this.router.navigate(['/people']);
   }
 
   async logout(): Promise<void> {
     await this.supabase.signOut();
-    this.menuOpen = false;
+    this.closeMenu();
     this.router.navigate(['/login']);
   }
 }

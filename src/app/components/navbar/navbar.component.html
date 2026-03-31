@@ -87,8 +87,10 @@
 
     <!-- Cabeçalho do drawer -->
     <div class="drawer-header">
-      <div class="drawer-avatar">
-        @if (userEmail) {
+      <div class="drawer-avatar" [class.has-photo]="isAdmin">
+        @if (isAdmin) {
+        <img src="assets/avatar.jpg" alt="avatar" class="avatar-img" />
+        } @else if (userEmail) {
         {{ userEmail.charAt(0).toUpperCase() }}
         } @else {
         🎬
@@ -100,14 +102,14 @@
         <span class="drawer-email-domain">{{ emailDomain }}</span>
         }
       </div>
-      <button class="drawer-close" (click)="menuOpen = false">✕</button>
+      <button class="drawer-close" (click)="closeMenu()">✕</button>
     </div>
 
     <div class="drawer-divider"></div>
 
     <!-- Filmes -->
     <span class="drawer-section-label">🎬 Filmes e Séries</span>
-    <a routerLink="/buscar" routerLinkActive="active" class="drawer-item" (click)="menuOpen = false">
+    <a routerLink="/buscar" routerLinkActive="active" class="drawer-item" (click)="closeMenu()">
       <span class="di-icon">🔍</span><span class="di-text">Buscar Filmes e Séries</span>
     </a>
 
@@ -116,22 +118,22 @@
     <!-- Filmes -->
     <span class="drawer-section-label">🎬 Filmes</span>
     <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="drawer-item"
-      (click)="menuOpen = false">
+      (click)="closeMenu()">
       <span class="di-icon">🔍</span><span class="di-text">Explorar</span>
     </a>
-    <a routerLink="/movies-popular" routerLinkActive="active" class="drawer-item" (click)="menuOpen = false">
+    <a routerLink="/movies-popular" routerLinkActive="active" class="drawer-item" (click)="closeMenu()">
       <span class="di-icon">🔥</span><span class="di-text">Populares</span>
     </a>
-    <a routerLink="/top-rated" routerLinkActive="active" class="drawer-item" (click)="menuOpen = false">
+    <a routerLink="/top-rated" routerLinkActive="active" class="drawer-item" (click)="closeMenu()">
       <span class="di-icon">⭐</span><span class="di-text">Mais Votados</span>
     </a>
-    <a routerLink="/now-playing" routerLinkActive="active" class="drawer-item" (click)="menuOpen = false">
+    <a routerLink="/now-playing" routerLinkActive="active" class="drawer-item" (click)="closeMenu()">
       <span class="di-icon">🎟️</span><span class="di-text">Em Cartaz</span>
     </a>
-    <a routerLink="/my-movies-list" routerLinkActive="active" class="drawer-item" (click)="menuOpen = false">
+    <a routerLink="/my-movies-list" routerLinkActive="active" class="drawer-item" (click)="closeMenu()">
       <span class="di-icon">📋</span><span class="di-text">Minha Lista</span>
     </a>
-    <a routerLink="/movie-stats" routerLinkActive="active" class="drawer-item" (click)="menuOpen = false">
+    <a routerLink="/movie-stats" routerLinkActive="active" class="drawer-item" (click)="closeMenu()">
       <span class="di-icon">⏱️</span><span class="di-text">Estatísticas</span>
     </a>
 
@@ -139,19 +141,19 @@
 
     <!-- Séries -->
     <span class="drawer-section-label">📺 Séries</span>
-    <a routerLink="/series" routerLinkActive="active" class="drawer-item" (click)="menuOpen = false">
+    <a routerLink="/series" routerLinkActive="active" class="drawer-item" (click)="closeMenu()">
       <span class="di-icon">🔍</span><span class="di-text">Explorar</span>
     </a>
-    <a routerLink="/series-popular" routerLinkActive="active" class="drawer-item" (click)="menuOpen = false">
+    <a routerLink="/series-popular" routerLinkActive="active" class="drawer-item" (click)="closeMenu()">
       <span class="di-icon">🔥</span><span class="di-text">Populares</span>
     </a>
-    <a routerLink="/series-top-rated" routerLinkActive="active" class="drawer-item" (click)="menuOpen = false">
+    <a routerLink="/series-top-rated" routerLinkActive="active" class="drawer-item" (click)="closeMenu()">
       <span class="di-icon">⭐</span><span class="di-text">Mais Votadas</span>
     </a>
-    <a routerLink="/my-series-list" routerLinkActive="active" class="drawer-item" (click)="menuOpen = false">
+    <a routerLink="/my-series-list" routerLinkActive="active" class="drawer-item" (click)="closeMenu()">
       <span class="di-icon">📋</span><span class="di-text">Minha Lista</span>
     </a>
-    <a routerLink="/series-stats" routerLinkActive="active" class="drawer-item" (click)="menuOpen = false">
+    <a routerLink="/series-stats" routerLinkActive="active" class="drawer-item" (click)="closeMenu()">
       <span class="di-icon">⏱️</span><span class="di-text">Estatísticas</span>
     </a>
 
@@ -165,11 +167,11 @@
 
     <div class="drawer-divider"></div>
 
-    <a routerLink="/sobre" routerLinkActive="active" class="drawer-item" (click)="menuOpen = false">
+    <a routerLink="/sobre" routerLinkActive="active" class="drawer-item" (click)="closeMenu()">
       <span class="di-icon">ℹ️</span><span class="di-text">Sobre</span>
     </a>
     @if (isAdmin) {
-    <a routerLink="/admin" routerLinkActive="active" class="drawer-item" (click)="menuOpen = false">
+    <a routerLink="/admin" routerLinkActive="active" class="drawer-item" (click)="closeMenu()">
       <span class="di-icon">🛠️</span><span class="di-text">Admin</span>
     </a>
     }
@@ -183,5 +185,5 @@
 </nav>
 
 @if (menuOpen) {
-<div class="nav-overlay" (click)="menuOpen = false"></div>
+<div class="nav-overlay" (click)="closeMenu()"></div>
 }
