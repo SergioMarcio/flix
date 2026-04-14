@@ -75,11 +75,21 @@ export class MovieStatsComponent implements OnInit {
   }
 
   private applySort(): void {
-    let list = this.watchedMovies;
-    if (this.likeFilter === 'liked')       list = list.filter(m => m.liked === 'liked');
-    if (this.likeFilter === 'neutral')     list = list.filter(m => m.liked === 'neutral');
-    if (this.likeFilter === 'disliked')    list = list.filter(m => m.liked === 'disliked');
-    if (this.likeFilter === 'unevaluated') list = list.filter(m => m.liked == null);
+    let list: WatchedMovie[] = this.watchedMovies;
+    if (this.likeFilter) {
+      const filterFn = (m: UserMovie) => {
+        if (this.likeFilter === 'liked')       return m.liked === 'liked';
+        if (this.likeFilter === 'neutral')     return m.liked === 'neutral';
+        if (this.likeFilter === 'disliked')    return m.liked === 'disliked';
+        if (this.likeFilter === 'unevaluated') return m.liked == null;
+        return true;
+      };
+      const withRuntime = this.watchedMovies.filter(filterFn);
+      const withoutRuntime = this.moviesWithoutRuntime
+        .filter(filterFn)
+        .map(m => ({ ...m, runtime: 0 }) as WatchedMovie);
+      list = [...withRuntime, ...withoutRuntime];
+    }
     this.displayedMovies = [...list].sort((a, b) => {
       if (this.sortBy === 'name') {
         const cmp = (a.movie_title || '').localeCompare(b.movie_title || '');

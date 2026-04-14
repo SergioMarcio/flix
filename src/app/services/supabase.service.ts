@@ -239,15 +239,25 @@ export class SupabaseService {
 
   async getMoviesByStatus(status: WatchStatus): Promise<UserMovie[]> {
     if (!this.client || !this.userId) return [];
-    const { data, error } = await this.client
-      .from('user_movies')
-      .select('*')
-      .eq('user_id', this.userId)
-      .eq('status', status)
-      .order('updated_at', { ascending: false });
-
-    if (error) throw error;
-    return data || [];
+    const PAGE = 1000;
+    let all: UserMovie[] = [];
+    let page = 0;
+    while (true) {
+      const from = page * PAGE;
+      const { data, error } = await this.client
+        .from('user_movies')
+        .select('*')
+        .eq('user_id', this.userId)
+        .eq('status', status)
+        .order('updated_at', { ascending: false })
+        .range(from, from + PAGE - 1);
+      if (error) throw error;
+      if (!data || data.length === 0) break;
+      all = all.concat(data);
+      if (data.length < PAGE) break;
+      page++;
+    }
+    return all;
   }
 
   async getStats(): Promise<{

@@ -57,7 +57,7 @@
     <div class="nav-group">
       <span class="nav-group-label">&nbsp;</span>
       <div class="nav-group-links">
-        <a routerLink="/sobre" routerLinkActive="active">Sobre</a>
+        <a routerLink="/about" routerLinkActive="active">Sobre</a>
         @if (isAdmin) {
         <a routerLink="/admin" routerLinkActive="active" class="pill admin">Admin</a>
         }
@@ -167,7 +167,7 @@
 
     <div class="drawer-divider"></div>
 
-    <a routerLink="/sobre" routerLinkActive="active" class="drawer-item" (click)="closeMenu()">
+    <a routerLink="/about" routerLinkActive="active" class="drawer-item" (click)="closeMenu()">
       <span class="di-icon">ℹ️</span><span class="di-text">Sobre</span>
     </a>
     @if (isAdmin) {

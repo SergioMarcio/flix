@@ -1,21 +1,21 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { APP_VERSION, CHANGELOG, VersionEntry } from '../../version';
 
 @Component({
-  selector: 'app-sobre',
+  selector: 'app-about',
   standalone: true,
   imports: [CommonModule, RouterLink],
-  templateUrl: './sobre.component.html',
-  styleUrl: './sobre.component.scss'
+  templateUrl: './about.component.html',
+  styleUrl: './about.component.scss'
 })
-export class SobreComponent {
+export class AboutComponent {
   appVersion = APP_VERSION;
   changelog: VersionEntry[] = CHANGELOG;
 
   techs = [
-    { name: 'Angular 17', desc: 'Framework front-end', icon: '🅰️', color: '#dd0031' },
+    { name: 'Angular 18', desc: 'Framework front-end', icon: '🅰️', color: '#dd0031' },
     { name: 'TypeScript', desc: 'Linguagem principal', icon: '🔷', color: '#3178c6' },
     { name: 'Supabase', desc: 'Autenticação & banco de dados', icon: '⚡', color: '#3ecf8e' },
     { name: 'TMDB API', desc: 'Dados de filmes e séries', icon: '🎬', color: '#01b4e4' },

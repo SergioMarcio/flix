@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
+import { AboutComponent } from './components/about/about.component';
 import { AdminComponent } from './components/admin/admin.component';
 import { LoginComponent } from './components/login/login.component';
+import { ManualComponent } from './components/manual/manual.component';
 import { MovieDetailComponent } from './components/movies/detail/detail.component';
 import { MovieHomeComponent } from './components/movies/home/home.component';
 import { MovieListComponent } from './components/movies/list/list.component';
@@ -8,15 +10,13 @@ import { MyMoviesListComponent } from './components/movies/my-movies-list/my-mov
 import { MovieStatsComponent } from './components/movies/stats/stats.component';
 import { PeopleComponent } from './components/people/people.component';
 import { PersonComponent } from './components/person/person.component';
+import { SearchComponent } from './components/search/search.component';
 import { SeriesDetailComponent } from './components/series/detail/detail.component';
 import { SeriesHomeComponent } from './components/series/home/home.component';
 import { SeriesListComponent } from './components/series/list/list.component';
 import { MySeriesListComponent } from './components/series/my-series-list/my-series-list.component';
 import { SeasonDetailComponent } from './components/series/season-detail/season-detail.component';
 import { SeriesStatsComponent } from './components/series/stats/stats.component';
-import { ManualComponent } from './components/manual/manual.component';
-import { SearchComponent } from './components/search/search.component';
-import { SobreComponent } from './components/sobre/sobre.component';
 import { adminGuard } from './guards/admin.guard';
 import { authGuard } from './guards/auth.guard';
 
@@ -44,7 +44,7 @@ export const routes: Routes = [
   { path: 'people', component: PeopleComponent, canActivate: [authGuard] },
   { path: 'person/:id', component: PersonComponent, canActivate: [authGuard] },
   { path: 'admin', component: AdminComponent, canActivate: [adminGuard] },
-  { path: 'sobre', component: SobreComponent },
+  { path: 'about', component: AboutComponent },
   { path: 'manual', component: ManualComponent },
   { path: 'buscar', component: SearchComponent, canActivate: [authGuard] },
   { path: '**', redirectTo: 'movies' }

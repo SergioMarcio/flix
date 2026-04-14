@@ -6,7 +6,12 @@
       "Bash(netstat -ano)",
       "Bash(findstr :4200)",
       "Bash(tasklist /FI \"PID eq 32616\")",
-      "Bash(python -X utf8 -c \"import sys,json,io; d=json.load\\(io.TextIOWrapper\\(sys.stdin.buffer,encoding=''''utf-8''''\\)\\); print\\(repr\\(d.get\\(''''prompt'''',''''''''\\)\\)\\)\")"
+      "Bash(python -X utf8 -c \"import sys,json,io; d=json.load\\(io.TextIOWrapper\\(sys.stdin.buffer,encoding=''''utf-8''''\\)\\); print\\(repr\\(d.get\\(''''prompt'''',''''''''\\)\\)\\)\")",
+      "Bash(ng version:*)",
+      "Bash(npm show:*)",
+      "Bash(git add:*)",
+      "Bash(git rm:*)",
+      "Bash(git commit:*)"
     ],
     "additionalDirectories": [
       "C:\\Users\\sergi\\.claude"
